@@ -1,0 +1,75 @@
+<!-- Toolbar -->
+<mat-toolbar color="primary" class="header">
+	<div>Polimigos</div>
+	<span class="nav-tool-items">
+		<mat-icon (click)="sidenav.toggle()" class="hamburger">menu</mat-icon>
+	</span>
+</mat-toolbar>
+
+<mat-sidenav-container>
+	<!-- Sidenav -->
+	<mat-sidenav #sidenav [mode]="isBiggerScreen() ? 'over' : 'side'" [(opened)]="opened" [fixedInViewport]="true"
+		[fixedTopGap] >
+		<mat-nav-list>
+			<a mat-list-item [routerLink]="'/saleOrder'">
+				<mat-icon>add_shopping_cart</mat-icon> {{arabic.navBarList.seling}}
+			</a>
+
+			<a mat-list-item [routerLink]="'/stock'" >
+				<mat-icon>addchart</mat-icon> {{arabic.navBarList.stock}}
+			</a>			
+
+			<a mat-list-item [routerLink]="'/customers'">
+				<mat-icon>person</mat-icon> {{arabic.navBarList.customers}}
+			</a>
+			<a mat-list-item>
+				<mat-icon>person</mat-icon> {{arabic.navBarList.supplers}}
+			</a>
+			<a mat-list-item>
+				<mat-icon>autorenew</mat-icon> {{arabic.navBarList.retrival}}
+			</a>
+			<a mat-list-item>
+				<mat-icon>trending_down</mat-icon> {{arabic.navBarList.expenses}}
+			</a>
+			<a mat-list-item>
+				<mat-icon>trending_up</mat-icon> {{arabic.navBarList.reports}}
+			</a>
+
+			<a mat-list-item>
+				<mat-icon>settings</mat-icon> {{arabic.navBarList.setting}}
+			</a>
+
+			<a mat-list-item>
+				<mat-icon>favorite_border</mat-icon> {{arabic.navBarList.aboutApp}}
+			</a>
+		</mat-nav-list>
+
+
+	</mat-sidenav>
+
+	<!-- Main content -->
+	<mat-sidenav-content>
+		<!-- Applying the mat-tyography class adds styles for native elements. -->
+		<!-- <section class="mat-typography title-group">
+		<h3>Heading Goes Here</h3>
+		<mat-divider></mat-divider>
+	  </section> -->
+
+
+		<!-- <mat-card class="my-alternate-theme">
+			My Alternate Themes: &nbsp; &nbsp; &nbsp;
+			<button mat-raised-button color="primary">
+				Primary
+			</button>
+			<button mat-raised-button color="accent">
+				Accent
+			</button>
+			<button mat-raised-button color="warn">
+				Warning
+			</button>
+		</mat-card> -->
+
+		<router-outlet></router-outlet>
+
+	</mat-sidenav-content>
+</mat-sidenav-container>
