@@ -23,6 +23,7 @@ export class PaymentsComponent implements OnInit {
   customerId!: number
   isLoading: boolean = false
   allPayment: any = 0.0
+  indebtedness: any = 0.0
 
   customerPaymentList!: CustomerPaymentModel[]
   //for tables
@@ -58,15 +59,24 @@ export class PaymentsComponent implements OnInit {
           this.customerPaymentList = data.customerPayment;
           this.count = data.totalItems;
           this.getAllPayment()
+          this.getCustomerOrdersCost()
         },
         error => {
           this.isLoading = false
           console.log(error);
         });
   }
+
   getAllPayment() {
     this.customerPaymentService.getAllPayment(this.customerId).subscribe(data => {
       this.allPayment = data
+    }, error => console.log(error))
+  }
+
+
+  getCustomerOrdersCost() {
+    this.customerPaymentService.getcustomerNetCostOrder(this.customerId).subscribe(data => {
+      this.indebtedness = data
     }, error => console.log(error))
   }
 

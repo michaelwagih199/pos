@@ -16,6 +16,7 @@ export class CustomerDetailsComponent implements OnInit {
   customerId!: number
   private routeSub!: Subscription;
   indebtedness:any = 0.0;
+  remaining:any = 0.0;
   customerPayment: CustomerPaymentModel = new CustomerPaymentModel()
   customer: CustomerModel = new CustomerModel()
 

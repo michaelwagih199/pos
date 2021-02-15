@@ -23,5 +23,10 @@ export class CustomerPaymentService {
     return this.http.get(`${this.baseUrl}/totalPayment?customerId=${customerId}`);
   }
 
+  getcustomerNetCostOrder(customerId:any): Observable<any>{
+    //http://localhost:8080/api/customerPayments/customerNetCost?customerId=2
+    return this.http.get(`${this.baseUrl}/customerNetCost?customerId=${customerId}`);
+  }
+
 
 }

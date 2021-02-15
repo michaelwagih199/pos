@@ -10,7 +10,11 @@ export class Arabic {
             name: 'الاسم',
             phone: 'موبايل',
             notes: 'ملاحظات',
-        }
+        },
+        dialogButtons: {
+            ok: "نعم",
+            cancel: "إلغاء",
+        },
     }
     
     navBarList = {
@@ -85,7 +89,8 @@ export class Arabic {
            paymentValue:"قيمة الدفعة",
            paymentDate:"تاريخ الدفعه",
            addPayment:"اضافة الدفعة",
-           allPayment:"اجمالى المدغوعات"
+           allPayment:"اجمالى المدفوعات",
+           remaining:"المتبقى"
 
        }
     }

@@ -16,4 +16,9 @@ export class OrderService {
     return this.http.get(`${this.baseUrl}/nextCode`);
   }
 
+  createOrder(customerName:any,orderTypeId:any,paymentTypeId:any):Observable<any>{
+    //http://localhost:8080/api/saleOrders?customerName=maged latif&orderTypeId=1&paymentTypeId=1
+    return this.http.post(`${this.baseUrl}?customerName=${customerName}&orderTypeId=${orderTypeId}&paymentTypeId=${paymentTypeId}`,{});
+  }
+
 }

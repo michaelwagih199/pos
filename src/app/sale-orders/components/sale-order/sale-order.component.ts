@@ -1,6 +1,6 @@
 import { Component, OnInit, } from '@angular/core';
 import { Arabic } from 'src/app/text';
-import { FormControl } from '@angular/forms';
+import { FormControl, FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { CustomerService } from 'src/app/customers/service/customer.service';
 import { startWith, map } from 'rxjs/operators';
@@ -12,6 +12,12 @@ import { DynamicOrder } from '../../models/dynamicOrder';
 import { DynamicItemService } from '../../service/dynamic-item.service';
 import { OrderService } from '../../service/order.service';
 import { ProductServiceService } from 'src/app/stock/service/product-service.service';
+import { OrderDetailsService } from '../../service/order-details.service';
+import { CheckitesResponse } from '../../models/checkitems';
+import { OrderDetailsPayload } from '../../models/orderPayload';
+import { ConfirmationDialog } from 'src/app/shared/components/layout/dialog/confirmation/confirmation.component';
+import { OrderPaymentService } from '../../service/order-payment.service';
+import { OrderPaymentModel } from '../../models/orderPayment';
 
 
 @Component({
@@ -38,7 +44,7 @@ export class SaleOrderComponent implements OnInit {
 
   isLoading: boolean = false
   isInstallment: boolean = false
-  searchInout: any
+  searchCustomerInout = ""
   productSearchValue: any
   installmentValue: any = 30
   productSelectedSearchFilter!: string;
@@ -50,21 +56,38 @@ export class SaleOrderComponent implements OnInit {
   paid: number = 0;
   discount: number = 0;
 
+  orderTypeId!: number
+  paymentTypeId!: number
+
+  //validate
+  canOrder: any
+  canSelect = false
+  checkResponse: CheckitesResponse | undefined
+  orderPayload: OrderDetailsPayload = new OrderDetailsPayload()
+
+  producForm!: FormGroup;
+
+  orderPayment: OrderPaymentModel = new OrderPaymentModel()
+
+
 
   constructor(
     private customerService: CustomerService,
     private dynamicItemService: DynamicItemService,
+    private orderDetailsService: OrderDetailsService,
+    private orderPaymentService: OrderPaymentService,
     private productService: ProductServiceService,
     private orderService: OrderService,
     private dialog: MatDialog,
     private _snackBar: MatSnackBar,
+    private fb: FormBuilder,
   ) { }
 
   ngOnInit(): void {
     this.getAllNames()
     this.getOrderCode()
     this.getProductNames()
-
+    this.validateform()
   }
 
   /**
@@ -114,7 +137,7 @@ export class SaleOrderComponent implements OnInit {
   */
 
   search() {
-    this.findByName()
+    this.findCustomerByName()
   }
 
   onSearchFilterChange(value: string) {
@@ -129,24 +152,49 @@ export class SaleOrderComponent implements OnInit {
   }
 
   productSearch() {
-    let orderTypeId
-    let paymentTypeId
-    if (this.orderType == 'جملة')
-      orderTypeId = 1;
-    else
-      orderTypeId = 2
+    if (this.paymentType && this.orderCode) {
+      this.findDynamicPyCode();
+      if (this.orderType == 'جملة')
+        this.orderTypeId = 1;
+      else
+        this.orderTypeId = 2
 
-    if (this.paymentType == 'كاش')
-      paymentTypeId = 1
-    else if (this.paymentType == 'تقسيط')
-      paymentTypeId = 2
-    else
-      paymentTypeId = 3
-    this.findproductByName(paymentTypeId, orderTypeId);
+      if (this.paymentType == 'كاش')
+        this.paymentTypeId = 1
+      else if (this.paymentType == 'تقسيط')
+        this.paymentTypeId = 2
+      else
+        this.paymentTypeId = 3
+    } else {
+      this.openSnackBar('اختر نوع الطلب وطريقة الدفع', '')
+    }
+
   }
 
-  findproductByName(paymentTypeId: number, orderTypeId: number) {
-    this.dynamicItemService.findDynamic(this.productSearchValue, paymentTypeId, orderTypeId, this.installmentValue)
+  checkProduct() {
+    this.orderPayload.dynamicDetailsDaoList = this.dynamicOrderList
+    this.orderDetailsService.checkIfItemNotEnough(this.orderPayload).subscribe(data => {
+      if (data.products) {
+        this.openSnackBar('البضاعة لا تكفى', '')
+        this.canOrder = true
+        // this.openSnackBar(`${data.products}`, '')
+      } else {
+        //chaeck alert
+        this.orderDetailsService.checkIfAlertItem(this.orderPayload).subscribe(data => {
+          if (data.products) {
+
+            this.openConfimation(`البضاعة ستقل للحد الادنى : ${data.products}`, () => this.findDynamicPyCode())
+          }
+        })
+      }
+    })
+  }
+
+  findDynamicPyCode() {
+    this.dynamicItemService.findDynamic(this.productSearchValue,
+      this.paymentTypeId,
+      this.orderTypeId,
+      this.installmentValue)
       .subscribe(data => {
         let item = this.dynamicOrderList.find(order => order.productName === data.productName)
         console.log(data)
@@ -161,34 +209,57 @@ export class SaleOrderComponent implements OnInit {
           }
         }
         this.calcTotal()
+        this.checkProduct()
       })
   }
 
 
-  findByName() {
+
+
+  findCustomerByName() {
+    //check items 
     this.isLoading = true
-    this.customerService.findByName(this.searchInout).subscribe(data => {
+    this.customerService.findByName(this.searchCustomerInout).subscribe(data => {
       this.isLoading = false
     }, error => console.log(error))
   }
 
   OnHumanSelected(SelectedHuman: any) {
-    this.searchInout = SelectedHuman;
-    this.findByName()
+    this.searchCustomerInout = SelectedHuman;
+    this.findCustomerByName()
   }
 
 
   displayFn(value: any): string {
     console.log(value)
-    this.searchInout = value
+    this.searchCustomerInout = value
     return value;
   }
 
   onSaveOrder() {
     //saveOrder
-    //todo 
-    
-    
+    this.orderPayment.discount = this.discount
+    this.orderPayment.netCost = this.totalValue - (this.discount + this.paid)
+    this.orderPayment.paid = this.paid
+    this.orderPayment.remaining = this.totalValue - this.paid
+    this.orderService.createOrder(this.searchCustomerInout, this.orderTypeId, this.paymentTypeId).subscribe(data => {
+      this.orderDetailsService.createOrderDetails(this.orderCode, this.orderPayload).subscribe()
+      this.orderPaymentService.createOrderPayment(this.orderCode, this.orderPayment).subscribe()
+      this.openSnackBar('تم حفظ الطلب', '')
+      this.reset()
+    }, error => console.log(error))
+
+  }
+
+  reset() {
+    this.totalValue = 0;
+    this.paid = 0;
+    this.discount = 0;
+    this.dynamicOrderList = []
+    this.orderType = ''
+    this.paymentType = ''
+    this.productSearchValue = ''
+    this.getOrderCode()
   }
 
   addDialog() {
@@ -247,6 +318,41 @@ export class SaleOrderComponent implements OnInit {
   private _filterproduct(value: string): string[] {
     const filterValue = value.toLowerCase();
     return this.productOptions.filter(productOption => productOption.toLowerCase().includes(filterValue));
+  }
+
+
+  openConfimation(title: any, confirmedFn: () => void) {
+    const dialogRef = this.dialog.open(ConfirmationDialog, {
+      data: {
+        message: title,
+        buttonText: {
+          ok: `${this.arabic.util.dialogButtons.ok}`,
+          cancel: `${this.arabic.util.dialogButtons.cancel}`
+        }
+      }
+    });
+    dialogRef.afterClosed().subscribe((confirmed: boolean) => {
+      if (confirmed) {
+        confirmedFn()
+        const a = document.createElement('a');
+        a.click();
+        a.remove();
+      }
+    });
+  }
+
+  greeter(fn: (a: string) => void) {
+    fn("Hello, World");
+  }
+  /**
+   * validate
+   */
+
+  validateform() {
+    this.producForm = this.fb.group({
+      productValueControl: new FormControl({ value: '', disabled: this.canOrder }),
+      productFilter: [null, [Validators.required]],
+    });
   }
 
   /**
