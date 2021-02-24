@@ -6,9 +6,10 @@ import { environment } from 'src/environments/environment';
 @Injectable({
   providedIn: 'root'
 })
-export class ExpensesCategoryService {
 
-  private baseUrl = `${environment.baseUrl}/expensesCategory`;
+export class SupliersService {
+
+  private baseUrl = `${environment.baseUrl}/suppliers`;
 
   constructor(private http: HttpClient) {}  
 
@@ -16,16 +17,20 @@ export class ExpensesCategoryService {
     return this.http.get(`${this.baseUrl}`);
   }
 
+  findById(id:number):Observable<any>{
+    return this.http.get(`${this.baseUrl}/${id}`);
+  }
+
   getAllPagination(params:any): Observable<any> {
     return this.http.get(`${this.baseUrl}/pageable`, { params });
   }
-  
+
   getNames():Observable<any> {
     return this.http.get(`${this.baseUrl}/names`);
   }
 
   findByName(name:any):Observable<any> {
-    return this.http.get(`${this.baseUrl}/categoryName?categoryName=${name}`);
+    return this.http.get(`${this.baseUrl}/supplierName?supplierName=${name}`);
   }
 
   create(object: any): Observable<any>  {
@@ -39,5 +44,5 @@ export class ExpensesCategoryService {
   delete(id:number): Observable<any> {
     return this.http.delete(`${this.baseUrl}/${id}`);
   }
-  
+
 }

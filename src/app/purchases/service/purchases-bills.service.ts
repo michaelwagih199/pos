@@ -6,24 +6,18 @@ import { environment } from 'src/environments/environment';
 @Injectable({
   providedIn: 'root'
 })
-export class ExpensesService {
+export class PurchasesBillsService {
 
-  private baseUrl = `${environment.baseUrl}/expenses`;
+  private baseUrl = `${environment.baseUrl}/purchasesBills`;
 
   constructor(private http: HttpClient) { }
 
   getAllPagination(params:any): Observable<any> {
     return this.http.get(`${this.baseUrl}/pageable`, { params });
   }
-  
-  findAll():Observable<any> {
-    return this.http.get(`${this.baseUrl}`);
+
+  create(object: any,supplierId:any): Observable<any>  {
+    return this.http.post(`${this.baseUrl}?supplierId=${supplierId}`, object);
   }
-
-
-  create(object: any,categoryId:any): Observable<any>  {
-    return this.http.post(`${this.baseUrl}?categoryId=${categoryId}`, object);
-  }
-
 
 }

@@ -6,7 +6,7 @@ body {
 body {
   margin: 0;
   // font-family: 'Cairo', sans-serif;
-  font-family: 'Roboto', sans-serif,'Almarai';
+  font-family: "Roboto", sans-serif, "Almarai";
 }
 
 .header {
@@ -22,7 +22,7 @@ body {
 
 .mat-nav-list .mat-list-item {
   font-size: 15px;
-  font-family: 'Cairo', sans-serif;
+  font-family: "Cairo", sans-serif;
 }
 
 .nav-tool-items {
@@ -36,8 +36,8 @@ body {
 }
 
 .mat-list-item.active {
-  background: rgba(0, 0, 0, .04);
-  font-family: 'Almarai', sans-serif;
+  background: rgba(0, 0, 0, 0.04);
+  font-family: "Almarai", sans-serif;
 }
 
 .mat-sidenav-content {
@@ -45,7 +45,7 @@ body {
 }
 
 .mat-sidenav {
-  background-color: #CBD9CC;
+  background-color: #cbd9cc;
   width: 200px;
 }
 
@@ -70,7 +70,7 @@ mat-sidenav mat-icon {
   margin-right: 25px;
 }
 
-.controlers-wrapper>* {
+.controlers-wrapper > * {
   width: 100%;
   padding: 0;
 }
@@ -95,7 +95,6 @@ table.mat-table,
 table {
   width: 100%;
 }
-
 
 body .mat-list-item {
   margin-bottom: 10px;
@@ -149,7 +148,7 @@ body .push-right {
 }
 
 .example-header-image {
-  background-image: url('https://material.angular.io/assets/img/examples/shiba1.jpg');
+  background-image: url("https://material.angular.io/assets/img/examples/shiba1.jpg");
   background-size: cover;
 }
 
@@ -179,29 +178,32 @@ mat-grid-tile {
   margin-right: 10px;
 }
 
-
 .mat-tab-label .mat-tab-label-content {
   display: inline-flex;
   justify-content: center;
   align-items: center;
   white-space: nowrap;
-  font-family: 'Cairo';
+  font-family: "Cairo";
   font-size: 18px;
   text-align: right;
 }
 
-th.mat-header-cell, td.mat-cell, td.mat-footer-cell {
+th.mat-header-cell,
+td.mat-cell,
+td.mat-footer-cell {
   padding: 0;
   border-bottom-width: 1px;
   border-bottom-style: solid;
   font-size: 16px;
-  font-family: 'Cairo';
+  font-family: "Cairo";
   text-align: right;
-  }
-  
-  
+}
 
-@media (max-width:1024px) {
+.full-width {
+  width: 100%;
+}
+
+@media (max-width: 1024px) {
   .inner-wrapper mat-card {
     width: 100%;
   }
@@ -224,7 +226,7 @@ th.mat-header-cell, td.mat-cell, td.mat-footer-cell {
   }
 }
 
-@media (max-width:767px) {
+@media (max-width: 767px) {
   .nav-tool-items {
     margin-right: 0;
   }
@@ -234,4 +236,5 @@ th.mat-header-cell, td.mat-cell, td.mat-footer-cell {
   }
 }
 
-
+/* Importing Bootstrap SCSS file. */
+@import '~bootstrap/scss/bootstrap';

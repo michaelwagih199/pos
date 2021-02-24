@@ -14,109 +14,117 @@ import { ExpensesCategoryService } from '../../service/expenses-category.service
 @Component({
   selector: 'app-expenses-category',
   templateUrl: './expenses-category.component.html',
-  styleUrls: ['./expenses-category.component.scss']
+  styleUrls: ['./expenses-category.component.scss'],
 })
 export class ExpensesCategoryComponent implements OnInit {
-
-  arabic: Arabic = new Arabic()
+  arabic: Arabic = new Arabic();
   categoryList!: CategoryModel[];
-  category: CategoryModel = new CategoryModel()
-  searchInout: any
-  isLoading:boolean= false
+  category: CategoryModel = new CategoryModel();
+  searchInout: any;
+  isLoading: boolean = false;
   //for tables
-  displayedColumns: string[] = ['id', 'categoryName', 'actions']
+  displayedColumns: string[] = ['id', 'categoryName', 'actions'];
   myControl = new FormControl();
   //for autocomplete
-  options!: string[]
-  filteredOptions!: Observable<string[]>
+  options!: string[];
+  filteredOptions!: Observable<string[]>;
 
   constructor(
     private categoryService: ExpensesCategoryService,
     private dialog: MatDialog,
     private _snackBar: MatSnackBar
-  ) { 
-
-  }
+  ) {}
 
   ngOnInit() {
-    this.getAllNames()
-    this.retrieve()
+    this.getAllNames();
+    this.retrieve();
   }
 
   private _filter(value: string): string[] {
     const filterValue = value.toLowerCase();
-    return this.options.filter(option => option.toLowerCase().includes(filterValue));
+    return this.options.filter((option) =>
+      option.toLowerCase().includes(filterValue)
+    );
   }
 
   /**
    * data
    */
   getAllNames() {
-    this.categoryService.getNames().subscribe(response => {
-      this.options = response
-      this.filteredOptions = this.myControl.valueChanges
-        .pipe(
+    this.categoryService.getNames().subscribe(
+      (response) => {
+        this.options = response;
+        this.filteredOptions = this.myControl.valueChanges.pipe(
           startWith(''),
-          map(value => this._filter(value))
+          map((value) => this._filter(value))
         );
-    }, error => {
-      console.log(error)
-    })
+      },
+      (error) => {
+        console.log(error);
+      }
+    );
   }
 
   findByName() {
-    this.isLoading = true
-    this.categoryService.findByName(this.searchInout).subscribe(data => {
-      this.categoryList = data
-      this.isLoading = false
-    }, error => console.log(error))
+    this.isLoading = true;
+    this.categoryService.findByName(this.searchInout).subscribe(
+      (data) => {
+        this.categoryList = data;
+        this.isLoading = false;
+      },
+      (error) => console.log(error)
+    );
   }
 
   refresh() {
     this.retrieve();
-    this.searchInout = ''
+    this.searchInout = '';
   }
-
 
   retrieve() {
-    this.isLoading=true
+    this.isLoading = true;
     const params = this.getRequestParams(this.page, this.pageSize);
-    this.categoryService.getAllPagination(params)
-      .subscribe(
-        data => {
-          this.isLoading=false
-          this.categoryList = data.expensesCategories;
-          this.count = data.totalItems;
-        },
-        error => {
-          this.isLoading=false
-          console.log(error);
-        });
+    this.categoryService.getAllPagination(params).subscribe(
+      (data) => {
+        this.isLoading = false;
+        this.categoryList = data.expensesCategories;
+        this.count = data.totalItems;
+      },
+      (error) => {
+        this.isLoading = false;
+        console.log(error);
+      }
+    );
   }
-
 
   /**
    * events
    */
 
   deleteDialog(action: any, obj: any) {
-    console.log(obj, action)
+    console.log(obj, action);
     const dialogRef = this.dialog.open(ConfirmationDialog, {
       data: {
         message: `${this.arabic.stock.category.util.dialog.deleteDialog.title}: ${obj.categoryName}`,
         buttonText: {
           ok: `${this.arabic.stock.category.util.dialog.dialogButtons.ok}`,
-          cancel: `${this.arabic.stock.category.util.dialog.dialogButtons.cancel}`
-        }
-      }
+          cancel: `${this.arabic.stock.category.util.dialog.dialogButtons.cancel}`,
+        },
+      },
     });
     dialogRef.afterClosed().subscribe((confirmed: boolean) => {
       if (confirmed) {
-        this.categoryService.delete(obj.id).subscribe(data => {
-          this.openSnackBar(`${this.arabic.stock.category.util.dialog.notification.deleted}`, '')
-          this.retrieve()
-          this.getAllNames()
-        }, error => console.log(error))
+        this.categoryService.delete(obj.id).subscribe(
+          (data) => {
+            this.openSnackBar(
+              `${this.arabic.stock.category.util.dialog.notification.deleted}`,
+              ''
+            );
+            this.retrieve();
+            this.getAllNames();
+          },
+          (error) => console.log(error)
+        );
         const a = document.createElement('a');
         a.click();
         a.remove();
@@ -124,83 +132,79 @@ export class ExpensesCategoryComponent implements OnInit {
     });
   }
 
-  editeDialog(action: any, obj: any){
+  editeDialog(action: any, obj: any) {
     const dialogConfig = new MatDialogConfig();
     dialogConfig.disableClose = true;
     dialogConfig.autoFocus = true;
     dialogConfig.data = {
-      id:obj.id,
-      description: obj.categoryName
+      id: obj.id,
+      description: obj.categoryName,
     };
     this.dialog.open(CreateCategoryComponent, dialogConfig);
     const dialogRef = this.dialog.open(CreateCategoryComponent, dialogConfig);
-    dialogRef.afterClosed().subscribe(
-      data => {
-        console.log(data)
-        this.category.categoryName = data.description
-        this.editeCategory(obj.id)
-        this.getAllNames()
-      }
-    );
-  }
-  
-  
-  editeCategory(id:number) {
-    this.categoryService.update(id,this.category).subscribe(data => {
-      this.openSnackBar(`${this.arabic.stock.category.util.dialog.notification.saved}`, '')
-      this.retrieve()
-    })
+    dialogRef.afterClosed().subscribe((data) => {
+      console.log(data);
+      this.category.categoryName = data.description;
+      this.editeCategory(obj.id);
+      this.getAllNames();
+    });
   }
 
+  editeCategory(id: number) {
+    this.categoryService.update(id, this.category).subscribe((data) => {
+      this.openSnackBar(
+        `${this.arabic.stock.category.util.dialog.notification.saved}`,
+        ''
+      );
+      this.retrieve();
+    });
+  }
 
   addCategoryDialog() {
     const dialogConfig = new MatDialogConfig();
     dialogConfig.disableClose = true;
     dialogConfig.autoFocus = true;
     dialogConfig.data = {
-      id:'',
-      description: ''
+      id: '',
+      description: '',
     };
     this.dialog.open(CreateCategoryComponent, dialogConfig);
     const dialogRef = this.dialog.open(CreateCategoryComponent, dialogConfig);
-    dialogRef.afterClosed().subscribe(
-      data => {
-        console.log(data)
-        this.category.categoryName = data.description
-        this.addCategory()
-        this.getAllNames()
-        
-      }
-    );
+    dialogRef.afterClosed().subscribe((data) => {
+      console.log(data);
+      this.category.categoryName = data.description;
+      this.addCategory();
+      this.getAllNames();
+    });
   }
 
   addCategory() {
-    this.categoryService.create(this.category).subscribe(data => {
-      this.openSnackBar(`${this.arabic.stock.category.util.dialog.notification.saved}`, '')
-      this.retrieve()
-    })
+    this.categoryService.create(this.category).subscribe((data) => {
+      this.openSnackBar(
+        `${this.arabic.stock.category.util.dialog.notification.saved}`,
+        ''
+      );
+      this.retrieve();
+    });
   }
 
-
   search() {
-    this.findByName()
+    this.findByName();
   }
 
   displayFn(value: any): string {
-    console.log(value)
-    this.searchInout = value
+    console.log(value);
+    this.searchInout = value;
     return value;
   }
 
   OnHumanSelected(SelectedHuman: any) {
     this.searchInout = SelectedHuman;
-    this.findByName()
+    this.findByName();
   }
 
-
- 
   /**
-   * ui ux 
+   * ui ux
    */
   openSnackBar(message: string, action: string) {
     this._snackBar.open(message, action, {
@@ -217,7 +221,6 @@ export class ExpensesCategoryComponent implements OnInit {
     this.retrieve();
   }
 
-
   getRequestParams(page: any, pageSize: any) {
     // tslint:disable-next-line:prefer-const
     let params: any = {};
@@ -229,6 +232,4 @@ export class ExpensesCategoryComponent implements OnInit {
     }
     return params;
   }
-
-
 }

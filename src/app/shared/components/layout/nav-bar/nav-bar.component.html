@@ -22,9 +22,14 @@
 			<a mat-list-item [routerLink]="'/customers'">
 				<mat-icon>person</mat-icon> {{arabic.navBarList.customers}}
 			</a>
-			<a mat-list-item>
-				<mat-icon>person</mat-icon> {{arabic.navBarList.supplers}}
+			<a mat-list-item [routerLink]="'/suppliers'">
+				<mat-icon>person</mat-icon> {{arabic.navBarList.suppliers}}
 			</a>
+			
+			<a mat-list-item [routerLink]="'/purchases'">
+				<mat-icon>add_shopping_cart</mat-icon> {{arabic.navBarList.purshasing}}
+			</a>
+
 			<a mat-list-item>
 				<mat-icon>autorenew</mat-icon> {{arabic.navBarList.retrival}}
 			</a>

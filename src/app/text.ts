@@ -20,7 +20,8 @@ export class Arabic {
     navBarList = {
         seling: "بيع",
         customers: "العملاء",
-        supplers: "الموردين",
+        suppliers: "الموردين",
+        purshasing:"المشتريات",
         retrival: "المرتجع",
         stock: "المخزن",
         expenses: "المصروفات",

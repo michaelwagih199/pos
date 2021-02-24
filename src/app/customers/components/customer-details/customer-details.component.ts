@@ -23,7 +23,6 @@ export class CustomerDetailsComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private customerPaymentService: CustomerPaymentService,
     private customerService: CustomerService,
   ) { }
 

@@ -7,6 +7,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { authInterceptorProviders } from './_helpers/auth.interceptor';
 import { CreateCategoryComponent } from './stock/dialog/create-category/create-category.component';
 import { CreateProductComponent } from './stock/dialog/create-product/create-product.component';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 
 @NgModule({
@@ -19,6 +20,7 @@ import { CreateProductComponent } from './stock/dialog/create-product/create-pro
     AppRoutingModule,
     HttpClientModule,
     BrowserAnimationsModule,
+    NgbModule,
   ],
   providers: [authInterceptorProviders],
   bootstrap: [AppComponent],
