@@ -4,10 +4,11 @@ import { PurchasesRoutingModule } from './purchases-routing.module';
 import { SharedModule } from '../shared/shared.module';
 import { PurchasesBillsDetailsComponent } from './components/purchases-bills-details/purchases-bills-details.component';
 import { PurchasesBillsComponent } from './components/purchases-bills/purchases-bills.component';
+import { CreatePurchasesComponent } from './dialog/create-purchases/create-purchases.component';
 
 
 @NgModule({
-  declarations: [PurchasesBillsComponent, PurchasesBillsDetailsComponent],
+  declarations: [PurchasesBillsComponent, PurchasesBillsDetailsComponent, CreatePurchasesComponent],
   imports: [
     CommonModule,
     PurchasesRoutingModule,

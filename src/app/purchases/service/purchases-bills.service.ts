@@ -16,6 +16,10 @@ export class PurchasesBillsService {
     return this.http.get(`${this.baseUrl}/pageable`, { params });
   }
 
+  getBillsCode(): Observable<any> {
+    return this.http.get(`${this.baseUrl}/nextCode`);
+  }
+
   create(object: any,supplierId:any): Observable<any>  {
     return this.http.post(`${this.baseUrl}?supplierId=${supplierId}`, object);
   }

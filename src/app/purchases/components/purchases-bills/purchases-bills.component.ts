@@ -4,6 +4,8 @@ import { PurchasesBills } from '../../model/purchases-bills';
 import { PurchasesBillsService } from '../../service/purchases-bills.service';
 import { Supplier } from 'src/app/suppliers/models/supplier';
 import { SupliersService } from 'src/app/suppliers/service/supliers.service';
+import { MatDialogConfig, MatDialog } from '@angular/material/dialog';
+import { CreatePurchasesComponent } from '../../dialog/create-purchases/create-purchases.component';
 
 @Component({
   selector: 'app-purchases-bills',
@@ -14,7 +16,8 @@ export class PurchasesBillsComponent implements OnInit {
 
 
   displayedColumns: string[] = ['id', 'billsDate', 'billCodeCode', 'total', 'paid', 'remaining', 'mySupplier', 'notes', 'actions'];
-  purchasesBills!: PurchasesBills[];
+  purchasesBillsList!: PurchasesBills[];
+  purchasesBills:PurchasesBills = new PurchasesBills()
   isLoading: boolean = false
   selectedSupllier: any
   supliersList!: Supplier[];
@@ -23,7 +26,8 @@ export class PurchasesBillsComponent implements OnInit {
   constructor(
     private _snackBar: MatSnackBar,
     private purchasesBillsService: PurchasesBillsService,
-    private supliersService: SupliersService,) { }
+    private supliersService: SupliersService, 
+    private dialog: MatDialog,) { }
 
   ngOnInit(): void {
     this.retrieve()
@@ -40,7 +44,7 @@ export class PurchasesBillsComponent implements OnInit {
     this.purchasesBillsService.getAllPagination(params).subscribe(
       (data) => {
         this.isLoading = false;
-        this.purchasesBills = data.purchasesBills
+        this.purchasesBillsList = data.purchasesBills
       },
       (error) => {
         this.isLoading = false;
@@ -58,8 +62,6 @@ export class PurchasesBillsComponent implements OnInit {
   /**
    * evants
    */
-
-
   editeDialog(obj: any) {
 
   }
@@ -73,9 +75,24 @@ export class PurchasesBillsComponent implements OnInit {
     this.getAllSuppliers()
   }
 
+  
   addDialog() {
+    const dialogConfig = new MatDialogConfig();
+    dialogConfig.disableClose = true;
+    dialogConfig.autoFocus = true;
 
+    dialogConfig.data = {
+      model: this.purchasesBills,
+    }
+
+    this.dialog.open(CreatePurchasesComponent, dialogConfig);
+    const dialogRef = this.dialog.open(CreatePurchasesComponent, dialogConfig);
+    dialogRef.afterClosed().subscribe((data) => {
+      console.log(data)
+      
+    });
   }
+
 
 
   /**

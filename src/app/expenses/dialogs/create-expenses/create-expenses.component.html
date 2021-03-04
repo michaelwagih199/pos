@@ -16,8 +16,8 @@
                 <div class="col">
                     <mat-form-field appearance="outline" class="full-width">
                         <mat-label>قيمة المصروف</mat-label>
-                        <input matInput type="number" required placeholder="قيمة المصروف" formControlName="expensesValue"
-                            [(ngModel)]="expenses.expensesValue" autocomplete="off">
+                        <input matInput type="number" required placeholder="قيمة المصروف"
+                            formControlName="expensesValue" [(ngModel)]="expenses.expensesValue" autocomplete="off">
                     </mat-form-field>
                 </div>
             </div>
@@ -49,10 +49,8 @@
             <div>
                 <mat-form-field class="full-width">
                     <mat-label>ملاحظات</mat-label>
-                    <textarea matInput 
-                    [(ngModel)]="expenses.notes"
-                            formControlName="notes"
-                            placeholder="ملاحظة"></textarea>
+                    <textarea matInput [(ngModel)]="expenses.notes" formControlName="notes"
+                        placeholder="ملاحظة"></textarea>
                 </mat-form-field>
             </div>
         </div>

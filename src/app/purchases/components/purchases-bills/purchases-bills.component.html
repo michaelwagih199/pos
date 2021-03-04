@@ -42,7 +42,7 @@
     <mat-card-content>
         <mat-progress-bar color="accent" mode="indeterminate" *ngIf="isLoading" value="20"></mat-progress-bar>
         <table mat-table
-            [dataSource]="purchasesBills| paginate: { itemsPerPage: pageSize, currentPage: page, totalItems: count }">
+            [dataSource]="purchasesBillsList| paginate: { itemsPerPage: pageSize, currentPage: page, totalItems: count }">
 
             <ng-container matColumnDef="id">
                 <th mat-header-cell *matHeaderCellDef>م</th>

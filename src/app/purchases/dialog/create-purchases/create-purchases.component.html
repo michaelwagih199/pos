@@ -1,0 +1,144 @@
+<div class="container-fluid">
+    <div class="row justify-content-between">
+        <div class="col">
+            <h3>حفظ فاتورة مشتريات</h3>
+        </div>
+        <div class="col">
+            <div class="row justify-content-center">
+                <h3 class="text-dark mt-2">كود الفاتورة</h3>
+                <h3 class="bg-danger text-white p-2 rounded mr-2">{{billsCode}}</h3>
+            </div>
+        </div>
+    </div>
+</div>
+<mat-divider></mat-divider>
+<mat-dialog-content>
+    <form nz-form [formGroup]="validateForm">
+        <div class="container-fluid mt-2">
+            <div class="row justify-content-between ">
+                <div class="col">
+                    <mat-form-field appearance="outline" class="full-width">
+                        <mat-label>التاريخ</mat-label>
+                        <input matInput [matDatepicker]="picker" formControlName="expensesDate"
+                            [(ngModel)]="obj.billsDate" autocomplete="off">
+                        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                        <mat-datepicker #picker></mat-datepicker>
+                    </mat-form-field>
+                </div>
+
+        
+                <div class="col">
+                    <mat-form-field appearance="outline" class="full-width">
+                        <mat-label>المورد</mat-label>
+                        <mat-select>
+                            <mat-option *ngFor="let item of supliersList" [value]="item.id">
+                                {{item.supplierName}}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+
+                <div class="col">
+                    <mat-form-field appearance="outline" class="full-width">
+                        <mat-label>قيمة الفاتورة</mat-label>
+                        <input matInput type="number" required placeholder="قيمة الفاتورة"
+                            formControlName="expensesValue" [(ngModel)]="total" autocomplete="off">
+                    </mat-form-field>
+                </div>
+                
+                <div class="col">
+                    <mat-form-field appearance="outline" class="full-width">
+                        <mat-label>المدفوع </mat-label>
+                        <input matInput type="number" required placeholder="المدفوع"
+                            formControlName="expensesValue" [(ngModel)]="paid" autocomplete="off">
+                    </mat-form-field>
+                </div>
+                <div class="col">
+                    <div class="row justify-content-center mt-2">
+                        <h3 class="text-dark">المتبقي</h3>
+                        <h3 class="bg-dark text-white p-2 rounded mr-2">{{total - paid}}</h3>
+                    </div>
+                </div>
+                <div class="col">
+                    <mat-form-field class="full-width">
+                        <mat-label>ملاحظات</mat-label>
+                        <textarea matInput [(ngModel)]="obj.notes" formControlName="notes"
+                            placeholder="ملاحظة"></textarea>
+                    </mat-form-field>
+                </div>
+            </div>
+            <mat-divider></mat-divider>
+
+            <div class="row justify-content-between custom-div  mt-2">
+
+                <div class="col mt-2">
+                    <mat-form-field class="full-width" appearance="outline">
+                        <mat-label>{{arabic.stock.products.util.searchBar}}</mat-label>
+                        <input type="text" placeholder={{arabic.stock.products.util.searchBar}} matInput
+                            [formControl]="myControl" [matAutocomplete]="auto" [(ngModel)]="searchInout">
+                        <mat-icon color="accent" matSuffix>search</mat-icon>
+                        <mat-autocomplete #auto="matAutocomplete">
+                            <mat-option *ngFor="let option of filteredOptions | async" [value]="option">
+                                {{option}}
+                            </mat-option>
+                        </mat-autocomplete>
+                    </mat-form-field>
+                </div>
+
+                <div class="col mt-2">
+                    <mat-form-field appearance="outline" class="full-width">
+                        <mat-label>الكمية</mat-label>
+                        <input matInput type="number" required placeholder="الكمية" formControlName="expensesValue"
+                            [(ngModel)]="purchasingDetails.itemQuantity" autocomplete="off">
+                    </mat-form-field>
+                </div>
+
+                <div class="col mt-2">
+                    <mat-form-field appearance="outline" class="full-width">
+                        <mat-label>السعر</mat-label>
+                        <input matInput type="number" required placeholder="السعر" formControlName="expensesValue"
+                            [(ngModel)]="purchasingDetails.itemPrice" autocomplete="off">
+                    </mat-form-field>
+                </div>
+                <div class="col-2 mt-3">
+                    <button mat-raised-button color="primary" (click)="addDynamic()">إضافة</button>
+                </div>
+            </div>
+
+            <div class="mt-2" style="text-align: center; font-family: 'cairo';">
+                <!--table-->
+                <table class="table table-bordered table-sm">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th>المنتج</th>
+                            <th>الكمية</th>
+                            <th>سعر الوحدة</th>
+                            <th>الاجمالى</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let item of dynamicOrderList">
+                            <th>{{ item.product }}</th>
+                            <td>{{ item.itemQuantity }}</td>
+                            <td>{{ item.itemPrice }}</td>
+                            <td>{{ item.total}}</td>
+                            <td>
+                                <button mat-icon-button color="warn" (click)="deleteDynamicItem(item)">
+                                    <mat-icon>delete</mat-icon>
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </form>
+</mat-dialog-content>
+<mat-divider></mat-divider>
+<mat-dialog-actions align="center">
+    <button mat-raised-button (click)="save()"
+        [disabled]="!validateForm.valid">{{arabic.stock.category.util.dialog.addDialog.buttons.save}}</button>
+    <button mat-raised-button color="primary" (click)="close()"
+        tabindex="1">{{arabic.stock.category.util.dialog.addDialog.buttons.cancel}}</button>
+</mat-dialog-actions>
