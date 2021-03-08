@@ -6,32 +6,44 @@ import { Supplier } from 'src/app/suppliers/models/supplier';
 import { SupliersService } from 'src/app/suppliers/service/supliers.service';
 import { MatDialogConfig, MatDialog } from '@angular/material/dialog';
 import { CreatePurchasesComponent } from '../../dialog/create-purchases/create-purchases.component';
+import { PurchasingBillsDetailsService } from '../../service/purchasing-bills-details.service';
+import { PurchasesBillsDetails } from '../../model/purchases-deteails';
 
 @Component({
   selector: 'app-purchases-bills',
   templateUrl: './purchases-bills.component.html',
-  styleUrls: ['./purchases-bills.component.scss']
+  styleUrls: ['./purchases-bills.component.scss'],
 })
 export class PurchasesBillsComponent implements OnInit {
-
-
-  displayedColumns: string[] = ['id', 'billsDate', 'billCodeCode', 'total', 'paid', 'remaining', 'mySupplier', 'notes', 'actions'];
+  displayedColumns: string[] = [
+    'id',
+    'billsDate',
+    'billCodeCode',
+    'total',
+    'paid',
+    'remaining',
+    'mySupplier',
+    'notes',
+    'actions',
+  ];
   purchasesBillsList!: PurchasesBills[];
-  purchasesBills:PurchasesBills = new PurchasesBills()
-  isLoading: boolean = false
-  selectedSupllier: any
+  purchasesBills: PurchasesBills = new PurchasesBills();
+  isLoading: boolean = false;
+  selectedSupllier: any;
   supliersList!: Supplier[];
-
+  dynamic!: PurchasesBillsDetails[];
 
   constructor(
     private _snackBar: MatSnackBar,
     private purchasesBillsService: PurchasesBillsService,
-    private supliersService: SupliersService, 
-    private dialog: MatDialog,) { }
+    private purchasingBillsDetailsService: PurchasingBillsDetailsService,
+    private supliersService: SupliersService,
+    private dialog: MatDialog
+  ) {}
 
   ngOnInit(): void {
-    this.retrieve()
-    this.getAllSuppliers()
+    this.retrieve();
+    this.getAllSuppliers();
   }
 
   /**
@@ -44,7 +56,8 @@ export class PurchasesBillsComponent implements OnInit {
     this.purchasesBillsService.getAllPagination(params).subscribe(
       (data) => {
         this.isLoading = false;
-        this.purchasesBillsList = data.purchasesBills
+        this.purchasesBillsList = data.purchasesBills;
+        this.count = data.totalItems;
       },
       (error) => {
         this.isLoading = false;
@@ -54,50 +67,65 @@ export class PurchasesBillsComponent implements OnInit {
   }
 
   getAllSuppliers() {
-    this.supliersService.findAll().subscribe(data => { this.supliersList = data }, error => console.error(error))
+    this.supliersService.findAll().subscribe(
+      (data) => {
+        this.supliersList = data;
+      },
+      (error) => console.error(error)
+    );
   }
-
-
 
   /**
    * evants
    */
-  editeDialog(obj: any) {
+  editeDialog(obj: any) {}
 
-  }
-
-  deleteDialog(obj: any) {
-
-  }
+  deleteDialog(obj: any) {}
 
   refresh() {
-    this.retrieve()
-    this.getAllSuppliers()
+    this.retrieve();
+    this.getAllSuppliers();
   }
 
-  
   addDialog() {
     const dialogConfig = new MatDialogConfig();
     dialogConfig.disableClose = true;
     dialogConfig.autoFocus = true;
-
     dialogConfig.data = {
       model: this.purchasesBills,
-    }
+    };
 
     this.dialog.open(CreatePurchasesComponent, dialogConfig);
     const dialogRef = this.dialog.open(CreatePurchasesComponent, dialogConfig);
     dialogRef.afterClosed().subscribe((data) => {
-      console.log(data)
       
+      this.dynamic = data.dynamicOrderList;
+
+      this.purchasesBillsService.create(data.model, data.supplier.id).subscribe(
+        (post) => {
+          this.dynamic.forEach((element) => {  
+            let obj: PurchasesBillsDetails = new PurchasesBillsDetails();
+            obj.itemPrice = element.itemPrice;
+            obj.itemQuantity = element.itemQuantity;
+            obj.total = element.total;
+            this.purchasingBillsDetailsService
+              .create(obj, post.billCodeCode, element.product)
+              .subscribe(() => {
+                this.openSnackBar('تم الحفظ', '');
+              });
+          });
+          this.retrieve();
+        },
+        (error) => {
+          console.log(error);
+        }
+      );
     });
   }
 
-
-
   /**
-  * ui ux
-  */
+   * ui ux
+   */
   openSnackBar(message: string, action: string) {
     this._snackBar.open(message, action, {
       duration: 2000,
@@ -113,7 +141,6 @@ export class PurchasesBillsComponent implements OnInit {
     this.retrieve();
   }
 
-
   getRequestParams(page: any, pageSize: any) {
     // tslint:disable-next-line:prefer-const
     let params: any = {};
@@ -125,7 +152,4 @@ export class PurchasesBillsComponent implements OnInit {
     }
     return params;
   }
-
-
-
 }

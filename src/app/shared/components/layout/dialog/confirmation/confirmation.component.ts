@@ -26,6 +26,7 @@ export class ConfirmationDialog implements OnInit {
   }
 
   ngOnInit(): void {
+    
   }
 
   onConfirmClick(): void {

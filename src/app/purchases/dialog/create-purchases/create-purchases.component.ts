@@ -27,14 +27,17 @@ import { PurchasesBills } from '../../model/purchases-bills';
 })
 export class CreatePurchasesComponent implements OnInit {
   validateForm!: FormGroup;
+  validateDynamicForm!: FormGroup;
 
   arabic: Arabic = new Arabic();
   supliersList!: Supplier[];
 
+  selectedSupllier!: Supplier;
+
   dynamicOrderList: PurchasesBillsDetails[] = [];
   obj: PurchasesBills = new PurchasesBills();
-  total:any
-  paid:any
+  total: number = 0;
+  paid: number = 0;
   purchasingDetails: PurchasesBillsDetails = new PurchasesBillsDetails();
 
   options!: string[];
@@ -58,6 +61,7 @@ export class CreatePurchasesComponent implements OnInit {
     this.validate();
     this.getProductNames();
     this.getNextCode();
+    this.getAllSuppliers();
   }
 
   private _filter(value: string): string[] {
@@ -72,8 +76,14 @@ export class CreatePurchasesComponent implements OnInit {
    */
 
   save() {
+    this.obj.billCodeCode = this.billsCode;
+    this.obj.paid = this.paid;
+    this.obj.total = this.total;
+    this.obj.remaining = this.total - this.paid;
     let data = {
       model: this.obj,
+      supplier: this.selectedSupllier,
+      dynamicOrderList: this.dynamicOrderList,
     };
     this.dialogRef.close(data);
   }
@@ -132,14 +142,12 @@ export class CreatePurchasesComponent implements OnInit {
     );
   }
 
-  retrieve() {
+  getAllSuppliers() {
     this.supliersService.findAll().subscribe(
       (data) => {
-        this.supliersList = data.suppliers;
+        this.supliersList = data;
       },
-      (error) => {
-        console.log(error);
-      }
+      (error) => console.error(error)
     );
   }
 
@@ -147,11 +155,17 @@ export class CreatePurchasesComponent implements OnInit {
 
   validate() {
     this.validateForm = this.fb.group({
-      expensesName: [null, [Validators.required]],
-      expensesValue: [null, [Validators.required]],
-      expensesDate: [null, [Validators.required]],
+      billsDate: [null, [Validators.required]],
+      supplierName: [null, [Validators.required]],
+      total: [null, [Validators.required]],
+      paid: [null, [Validators.required]],
       notes: [null],
-      productCategory: [null, [Validators.required]],
+    });
+
+    this.validateDynamicForm = this.fb.group({
+      product: [null, [Validators.required]],
+      quantity: [null, [Validators.required]],
+      price: [null, [Validators.required]],
     });
   }
 }

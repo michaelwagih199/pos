@@ -8,10 +8,11 @@ import { NgxPaginationModule } from 'ngx-pagination';
 import * as fromComponents from './components';
 import { NgMaterialModule } from './components/ng-material/ng-material.module';
 import { ConfirmationDialog } from './components/layout/dialog/confirmation/confirmation.component';
+import { AboutAppDialogComponent } from './components/layout/dialog/about-app-dialog/about-app-dialog.component';
 
 
 @NgModule({
-  declarations: [...fromComponents.components, ConfirmationDialog],
+  declarations: [...fromComponents.components, ConfirmationDialog, AboutAppDialogComponent],
   imports: [
     CommonModule,
     SharedRoutingModule,
