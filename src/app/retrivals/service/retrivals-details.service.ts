@@ -6,9 +6,9 @@ import { environment } from 'src/environments/environment';
 @Injectable({
   providedIn: 'root'
 })
-export class PurchasingBillsDetailsService {
+export class RetrivalsDetailsService {
 
-  private baseUrl = `${environment.baseUrl}/purchasesBillsDetails`;
+  private baseUrl = `${environment.baseUrl}/retrievalsDetails`;
 
   constructor(private http: HttpClient) { }
   
@@ -19,5 +19,4 @@ export class PurchasingBillsDetailsService {
   getAllByBillId(id:any): Observable<any>{
     return this.http.get(`${this.baseUrl}/${id}`);
   }
-
 }

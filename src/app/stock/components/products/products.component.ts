@@ -11,6 +11,7 @@ import { Observable } from 'rxjs';
 import { startWith, map } from 'rxjs/operators';
 import { ConfirmationDialog } from 'src/app/shared/components/layout/dialog/confirmation/confirmation.component';
 import { CreateProductComponent } from '../../dialog/create-product/create-product.component';
+import { BarcodeComponent } from '../../dialog/barcode/barcode.component';
 
 @Component({
   selector: 'app-products',
@@ -122,6 +123,22 @@ export class ProductsComponent implements OnInit {
     console.log(value)
     this.searchInout = value
     return value;
+  }
+
+  onBarcode(element:any){
+    this.isLoading = true
+    const dialogRef = this.dialog.open(BarcodeComponent, {
+      data: {
+        productCode:element.productCode
+      }
+    });
+    dialogRef.afterClosed().subscribe((confirmed: boolean) => {
+      if (confirmed) {
+        const a = document.createElement('a');
+        a.click();
+        a.remove();
+      }
+    });
   }
 
   OnHumanSelected(SelectedHuman: any) {

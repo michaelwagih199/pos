@@ -1,0 +1,23 @@
+<div class="doNotPrint">
+    <h2 mat-dialog-title>كود المنتج</h2>
+</div>
+<mat-dialog-content>
+
+    <!-- <div id="print-section">
+        <ngx-barcode [bc-value]="barcode" [bc-display-value]="true"></ngx-barcode>
+    </div> -->
+
+
+    <div>
+        <ngx-barcode [bc-value]="barcode" [bc-display-value]="true"></ngx-barcode>
+    </div>
+
+</mat-dialog-content>
+
+<mat-dialog-actions align="center">
+    <div class="doNotPrint">
+        <button mat-raised-button color="warn" (click)="onPrint()">طباعة</button>
+        <button mat-raised-button color="primary" (click)="close()" tabindex="1">الغاء</button>
+    </div>
+
+</mat-dialog-actions>

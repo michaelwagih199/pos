@@ -25,5 +25,9 @@ export class OrderDetailsService {
     return this.http.post(`${this.baseUrl}?orderCode=${orderCode}`,object);
   }
 
+  getByCode(orderCode: any): Observable<any> {
+    //http://localhost:8080/api/saleOrderDetails/orderCode?orderCode=11002
+    return this.http.get(`${this.baseUrl}/orderCode?orderCode=${orderCode}`);
+  }
   
 }

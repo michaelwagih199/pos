@@ -27,6 +27,7 @@ export class CreateProductComponent implements OnInit {
     private dialogRef: MatDialogRef<CreateProductComponent>,
     @Inject(MAT_DIALOG_DATA) data: any) {
     this.product = data.productModel
+    this.checkValue = "mmmmm"
   }
 
   ngOnInit(): void {

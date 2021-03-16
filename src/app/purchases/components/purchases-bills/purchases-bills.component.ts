@@ -8,6 +8,7 @@ import { MatDialogConfig, MatDialog } from '@angular/material/dialog';
 import { CreatePurchasesComponent } from '../../dialog/create-purchases/create-purchases.component';
 import { PurchasingBillsDetailsService } from '../../service/purchasing-bills-details.service';
 import { PurchasesBillsDetails } from '../../model/purchases-deteails';
+import { PurchasesBillsDetailsComponent } from '../../dialog/purchases-bills-details/purchases-bills-details.component';
 
 @Component({
   selector: 'app-purchases-bills',
@@ -78,9 +79,23 @@ export class PurchasesBillsComponent implements OnInit {
   /**
    * evants
    */
-  editeDialog(obj: any) {}
+  editeDialog(obj: any) {
+
+  }
 
   deleteDialog(obj: any) {}
+
+
+  Ondetails(obj:any){
+    const dialogConfig = new MatDialogConfig();
+    dialogConfig.data = {
+      id: obj.id,
+    };
+
+    this.dialog.open(PurchasesBillsDetailsComponent, dialogConfig);
+    const dialogRef = this.dialog.open(PurchasesBillsDetailsComponent, dialogConfig);
+  
+  }
 
   refresh() {
     this.retrieve();

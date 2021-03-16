@@ -17,4 +17,8 @@ export class OrderPaymentService {
     return this.http.post(`${this.baseUrl}?orderCode=${orderCode}`,object);
   }
 
+  getByCode(orderCode: any): Observable<any> {
+    return this.http.get(`${this.baseUrl}/orderCode?orderCode=${orderCode}`);
+  }
+
 }

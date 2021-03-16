@@ -8,14 +8,16 @@ import { ProductsComponent } from './components/products/products.component';
 import { SharedModule } from '../shared/shared.module';
 import { CreateCategoryComponent } from './dialog/create-category/create-category.component';
 import { CreateProductComponent } from './dialog/create-product/create-product.component';
-
+import { BarcodeComponent } from './dialog/barcode/barcode.component';
+import { NgxBarcodeModule } from 'ngx-barcode';
 
 @NgModule({
-  declarations: [StockComponent, ProductCategoryComponent, ProductsComponent, CreateCategoryComponent, CreateProductComponent],
+  declarations: [StockComponent, ProductCategoryComponent, ProductsComponent, CreateCategoryComponent, CreateProductComponent, BarcodeComponent],
   imports: [
     CommonModule,
     StockRoutingModule,
-    SharedModule
+    SharedModule,
+    NgxBarcodeModule,
   ]
 })
 export class StockModule { }

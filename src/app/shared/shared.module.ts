@@ -4,7 +4,6 @@ import { SharedRoutingModule } from './shared-routing.module';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { NgxPaginationModule } from 'ngx-pagination';
-
 import * as fromComponents from './components';
 import { NgMaterialModule } from './components/ng-material/ng-material.module';
 import { ConfirmationDialog } from './components/layout/dialog/confirmation/confirmation.component';
@@ -21,7 +20,7 @@ import { AboutAppDialogComponent } from './components/layout/dialog/about-app-di
     CommonModule,
     RouterModule,
     NgMaterialModule,
-    NgxPaginationModule
+    NgxPaginationModule,
    ],
   exports: [   
     CommonModule,
@@ -30,7 +29,8 @@ import { AboutAppDialogComponent } from './components/layout/dialog/about-app-di
     FormsModule,
     CommonModule,
     NgMaterialModule,
-    NgxPaginationModule
+    NgxPaginationModule,
+    
   ]
 })
 export class SharedModule { }
