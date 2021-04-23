@@ -14,7 +14,7 @@ export class ProductServiceService {
   constructor(private http: HttpClient) {}  
 
   findAll():Observable<any> {
-    return this.http.get(`${this.baseUrl}`);
+    return this.http.get(`${this.baseUrl}/active`);
   }
 
   getAllPagination(params:any): Observable<any> {
@@ -46,7 +46,7 @@ export class ProductServiceService {
   }
 
   delete(id:number): Observable<any> {
-    return this.http.delete(`${this.baseUrl}/${id}`);
+    return this.http.put(`${this.baseUrl}/archive?id=${id}`,null);
   }
 
 }

@@ -9,6 +9,8 @@ import { CreatePurchasesComponent } from '../../dialog/create-purchases/create-p
 import { PurchasingBillsDetailsService } from '../../service/purchasing-bills-details.service';
 import { PurchasesBillsDetails } from '../../model/purchases-deteails';
 import { PurchasesBillsDetailsComponent } from '../../dialog/purchases-bills-details/purchases-bills-details.component';
+import { ConfirmationDialog } from 'src/app/shared/components/layout/dialog/confirmation/confirmation.component';
+import { Arabic } from 'src/app/text';
 
 @Component({
   selector: 'app-purchases-bills',
@@ -33,7 +35,9 @@ export class PurchasesBillsComponent implements OnInit {
   selectedSupllier: any;
   supliersList!: Supplier[];
   dynamic!: PurchasesBillsDetails[];
+  arabic: Arabic = new Arabic()
 
+  
   constructor(
     private _snackBar: MatSnackBar,
     private purchasesBillsService: PurchasesBillsService,
@@ -79,22 +83,48 @@ export class PurchasesBillsComponent implements OnInit {
   /**
    * evants
    */
-  editeDialog(obj: any) {
+  editeDialog(obj: any) {}
 
+  deleteDialog(obj: PurchasesBills) {
+    const dialogRef = this.dialog.open(ConfirmationDialog, {
+      data: {
+        message: `${this.arabic.stock.category.util.dialog.deleteDialog.title}: ${obj.billCodeCode}`,
+        buttonText: {
+          ok: `${this.arabic.stock.category.util.dialog.dialogButtons.ok}`,
+          cancel: `${this.arabic.stock.category.util.dialog.dialogButtons.cancel}`,
+        },
+      },
+    });
+    dialogRef.afterClosed().subscribe((confirmed: boolean) => {
+      if (confirmed) {
+        this.purchasesBillsService.delete(obj.id).subscribe(
+          (data) => {
+            this.openSnackBar(
+              `${this.arabic.stock.category.util.dialog.notification.deleted}`,
+              ''
+            );
+            this.retrieve();
+          },
+          (error) => console.log(error)
+        );
+        const a = document.createElement('a');
+        a.click();
+        a.remove();
+      }
+    });
   }
 
-  deleteDialog(obj: any) {}
-
-
-  Ondetails(obj:any){
+  Ondetails(obj: any) {
     const dialogConfig = new MatDialogConfig();
     dialogConfig.data = {
       id: obj.id,
     };
 
     this.dialog.open(PurchasesBillsDetailsComponent, dialogConfig);
-    const dialogRef = this.dialog.open(PurchasesBillsDetailsComponent, dialogConfig);
-  
+    const dialogRef = this.dialog.open(
+      PurchasesBillsDetailsComponent,
+      dialogConfig
+    );
   }
 
   refresh() {
@@ -113,18 +143,17 @@ export class PurchasesBillsComponent implements OnInit {
     this.dialog.open(CreatePurchasesComponent, dialogConfig);
     const dialogRef = this.dialog.open(CreatePurchasesComponent, dialogConfig);
     dialogRef.afterClosed().subscribe((data) => {
-      
       this.dynamic = data.dynamicOrderList;
 
       this.purchasesBillsService.create(data.model, data.supplier.id).subscribe(
         (post) => {
-          this.dynamic.forEach((element) => {  
+          this.dynamic.forEach((element) => {
             let obj: PurchasesBillsDetails = new PurchasesBillsDetails();
             obj.itemPrice = element.itemPrice;
             obj.itemQuantity = element.itemQuantity;
             obj.total = element.total;
             this.purchasingBillsDetailsService
-              .create(obj, post.billCodeCode, element.product)
+              .create(obj, post.billCodeCode, element.product.productCode)
               .subscribe(() => {
                 this.openSnackBar('تم الحفظ', '');
               });

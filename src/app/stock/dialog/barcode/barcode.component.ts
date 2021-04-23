@@ -1,5 +1,8 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, Inject, OnInit, ViewEncapsulation } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { Router } from '@angular/router';
+import { DataService } from 'src/app/shared/service/data.service';
+import { ProductModel } from '../../model/productModel';
 
 @Component({
   selector: 'app-barcode',
@@ -7,23 +10,36 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
   styleUrls: ['./barcode.component.scss'],
 })
 export class BarcodeComponent implements OnInit {
-  barcode: any;
+  model: ProductModel = new ProductModel();
   constructor(
     private dialogRef: MatDialogRef<BarcodeComponent>,
-    @Inject(MAT_DIALOG_DATA) data: any
+    @Inject(MAT_DIALOG_DATA) data: any,
+    private router: Router,
+    private dataServer: DataService
   ) {
-    console.log(data);
-    this.barcode = data.productCode;
+    this.model = data.productCode;
   }
 
   ngOnInit(): void {}
 
-  onPrint(){
-    window.print();
-}
- 
+  onPrint() {
+   
+    let data = {
+      parcode: this.model.productCode,
+      name: this.model.productName,
+    };
+    this.dataServer.changeMessage(data);
+    this.redirectTo(`/printing/parcode`);
+    this.dialogRef.close();
+  }
 
   close() {
     this.dialogRef.close();
+  }
+
+  redirectTo(uri: string) {
+    this.router
+      .navigateByUrl('/', { skipLocationChange: true })
+      .then(() => this.router.navigate([uri]));
   }
 }

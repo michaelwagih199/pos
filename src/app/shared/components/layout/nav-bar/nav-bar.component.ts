@@ -1,6 +1,9 @@
 import { Component, OnInit, ViewChild, HostListener } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSidenav } from '@angular/material/sidenav';
+import { Router } from '@angular/router';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { TokenStorageService } from 'src/app/core/services/token-storage.service';
 import { Arabic } from 'src/app/text';
 import { AboutAppDialogComponent } from '../dialog/about-app-dialog/about-app-dialog.component';
 
@@ -11,14 +14,45 @@ import { AboutAppDialogComponent } from '../dialog/about-app-dialog/about-app-di
 })
 export class NavBarComponent implements OnInit {
   arabic: Arabic = new Arabic();
+  userName: any;
+  DynamicNavBar = {
+    saleOrder: true,
+    stock: false,
+    customers: true,
+    suppliers: false,
+    purshasing: false,
+    retrival: true,
+    expenses: false,
+    reports: false,
+    setting: false,
+  };
 
   opened = true;
   @ViewChild('sidenav', { static: true })
   sidenav!: MatSidenav;
 
-  constructor(public dialog: MatDialog) {}
-  
+  constructor(
+    public dialog: MatDialog,
+    private router: Router,
+    private takenServive: TokenStorageService
+  ) {}
+
   ngOnInit() {
+    let userPermission = sessionStorage.getItem('auth-permission');
+    this.userName = sessionStorage.getItem('userName')?.toString();
+    if (userPermission?.includes('fullPermission')) {
+      this.DynamicNavBar.expenses = true;
+      this.DynamicNavBar.stock = true;
+      this.DynamicNavBar.suppliers = true;
+      this.DynamicNavBar.purshasing = true;
+      this.DynamicNavBar.expenses = true;
+      this.DynamicNavBar.reports = true;
+      this.DynamicNavBar.setting = true;
+      console.log(true);
+    } else {
+      console.log(false);
+    }
+
     console.log(window.innerWidth);
     if (window.innerWidth < 768) {
       this.sidenav.fixedTopGap = 55;
@@ -42,6 +76,10 @@ export class NavBarComponent implements OnInit {
 
   onItemClick() {}
 
+  logoutComfirm() {
+    this.logout();
+  }
+
   isBiggerScreen() {
     const width =
       window.innerWidth ||
@@ -60,5 +98,15 @@ export class NavBarComponent implements OnInit {
       console.log(`Dialog result: ${result}`);
     });
   }
-  
+
+  logout() {
+    this.takenServive.signOut();
+    this.redirectTo('/');
+  }
+
+  redirectTo(uri: string) {
+    this.router
+      .navigateByUrl('/', { skipLocationChange: true })
+      .then(() => this.router.navigate([uri]));
+  }
 }

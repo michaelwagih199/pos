@@ -25,4 +25,8 @@ export class SupliersPaymentService {
     return this.http.get(`${this.baseUrl}/totalPayment?supplierId=${supplierId}`);
   }
 
+  delete(id:number): Observable<any> {
+    return this.http.put(`${this.baseUrl}/archive?id=${id}`, null);
+  }
+
 }

@@ -7,33 +7,39 @@ import { ExpensesService } from '../../service/expenses.service';
 import { element } from 'protractor';
 import { Arabic } from 'src/app/text';
 import { CreateExpensesComponent } from '../../dialogs/create-expenses/create-expenses.component';
-
+import { ConfirmationDialog } from 'src/app/shared/components/layout/dialog/confirmation/confirmation.component';
 
 @Component({
   selector: 'app-expenses-list',
   templateUrl: './expenses-list.component.html',
-  styleUrls: ['./expenses-list.component.scss']
+  styleUrls: ['./expenses-list.component.scss'],
 })
-
 export class ExpensesListComponent implements OnInit {
-
   arabic: Arabic = new Arabic();
 
-  isLoading: boolean = false
+  isLoading: boolean = false;
   selectedValue: string | undefined;
-  total: number = 0.0
+  total: number = 0.0;
   categoryList = [];
   expensesList!: ExpensessModel[];
-  expenses: ExpensessModel = new ExpensessModel()
+  expenses: ExpensessModel = new ExpensessModel();
 
-  displayedColumns: string[] = ['id', 'createdDate', 'expensesName', 'expensesValue', 'notes', 'expensesCategory', 'actions'];
+  displayedColumns: string[] = [
+    'id',
+    'createdDate',
+    'expensesName',
+    'expensesValue',
+    'notes',
+    'expensesCategory',
+    'actions',
+  ];
 
   constructor(
     private categoryService: ExpensesCategoryService,
     private expensesService: ExpensesService,
     private dialog: MatDialog,
     private _snackBar: MatSnackBar
-  ) { }
+  ) {}
 
   ngOnInit(): void {
     this.getAllNames();
@@ -60,9 +66,8 @@ export class ExpensesListComponent implements OnInit {
     this.expensesService.getAllPagination(params).subscribe(
       (data) => {
         this.isLoading = false;
-        this.expensesList = data.expenses
-        this.count = data.totalItems,
-        this.sumTotal()
+        this.expensesList = data.expenses;
+        (this.count = data.totalItems), this.sumTotal();
       },
       (error) => {
         this.isLoading = false;
@@ -72,13 +77,13 @@ export class ExpensesListComponent implements OnInit {
   }
 
   sumTotal() {
-    this.total = 0
+    this.total = 0;
     this.expensesService.findAll().subscribe(
       (data) => {
-        let list: ExpensessModel[]
+        let list: ExpensessModel[];
         list = data;
-        list.forEach(element => {
-          this.total += element.expensesValue
+        list.forEach((element) => {
+          this.total += element.expensesValue;
         });
       },
       (error) => {
@@ -87,14 +92,11 @@ export class ExpensesListComponent implements OnInit {
     );
   }
 
-
   /**
    * events
    */
 
-  refresh() {
-    
-  }
+  refresh() {}
 
   addDialog() {
     const dialogConfig = new MatDialogConfig();
@@ -103,12 +105,12 @@ export class ExpensesListComponent implements OnInit {
 
     dialogConfig.data = {
       model: this.expenses,
-    }
+    };
 
     this.dialog.open(CreateExpensesComponent, dialogConfig);
     const dialogRef = this.dialog.open(CreateExpensesComponent, dialogConfig);
     dialogRef.afterClosed().subscribe((data) => {
-      console.log(data)
+      console.log(data);
       this.addExpenses(data.model, data.categoryId);
       this.getAllNames();
     });
@@ -116,27 +118,64 @@ export class ExpensesListComponent implements OnInit {
 
   addExpenses(expenses: any, categoryId: any) {
     this.expensesService.create(expenses, categoryId).subscribe((data) => {
-      this.openSnackBar(
-        `${this.arabic.util.saved}`, ''
-      );
+      this.openSnackBar(`${this.arabic.util.saved}`, '');
       this.retrieve();
     });
   }
 
+  editeDialog(obj: ExpensessModel) {
+    const dialogConfig = new MatDialogConfig();
+    dialogConfig.disableClose = true;
+    dialogConfig.autoFocus = true;
 
-  editeDialog(obj: any) {
-
+    dialogConfig.data = {
+      model: obj,
+    };
+    this.dialog.open(CreateExpensesComponent, dialogConfig);
+    const dialogRef = this.dialog.open(CreateExpensesComponent, dialogConfig);
+    dialogRef.afterClosed().subscribe((data) => {
+      this.expensesService
+        .update(data.model.id, data.model)
+        .subscribe((data) => {
+          this.openSnackBar(`${this.arabic.util.saved}`, '');
+          this.retrieve();
+        });
+    });
   }
 
-  deleteDialog(obj: any) {
-
+  deleteDialog(obj: ExpensessModel) {
+    const dialogRef = this.dialog.open(ConfirmationDialog, {
+      data: {
+        message: `${this.arabic.stock.category.util.dialog.deleteDialog.title}: ${obj.expensesName}`,
+        buttonText: {
+          ok: `${this.arabic.stock.category.util.dialog.dialogButtons.ok}`,
+          cancel: `${this.arabic.stock.category.util.dialog.dialogButtons.cancel}`,
+        },
+      },
+    });
+    dialogRef.afterClosed().subscribe((confirmed: boolean) => {
+      if (confirmed) {
+        this.expensesService.delete(obj.id).subscribe(
+          (data) => {
+            this.openSnackBar(
+              `${this.arabic.stock.category.util.dialog.notification.deleted}`,
+              ''
+            );
+            this.retrieve();
+            this.getAllNames();
+          },
+          (error) => console.log(error)
+        );
+        const a = document.createElement('a');
+        a.click();
+        a.remove();
+      }
+    });
   }
-
-
 
   /**
-  * ui ux
-  */
+   * ui ux
+   */
   openSnackBar(message: string, action: string) {
     this._snackBar.open(message, action, {
       duration: 2000,
@@ -152,7 +191,6 @@ export class ExpensesListComponent implements OnInit {
     this.retrieve();
   }
 
-
   getRequestParams(page: any, pageSize: any) {
     // tslint:disable-next-line:prefer-const
     let params: any = {};
@@ -164,6 +202,4 @@ export class ExpensesListComponent implements OnInit {
     }
     return params;
   }
-
-
 }

@@ -1,5 +1,5 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { ModalDismissReasons, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ExpensessModel } from 'src/app/expenses/models/expensess-model';
@@ -24,10 +24,17 @@ export class CreateRetrivalsComponent implements OnInit {
   retriveModel: RetrivalsModel = new RetrivalsModel();
   codeSearch: any;
   billsCode: any;
-  productName: any;
   saleOrderList: SaleOrderDetails[] | undefined;
-  retrivalBillsList: RetrivalsModel[] | undefined;
+  retrivalBillsList: SaleOrderDetails[] = [];
   saleOrderPaymentList: OrderPaymentModel[] | undefined;
+  quantity: number = 0;
+  maxQuantity: number = 0;
+  discount:number = 0;
+  total:number = 0;
+  netCost:number = 0;
+
+  ismaxQuantity: boolean = false;
+  productSelected: SaleOrderDetails = new SaleOrderDetails();
 
   constructor(
     private fb: FormBuilder,
@@ -41,6 +48,9 @@ export class CreateRetrivalsComponent implements OnInit {
 
   ngOnInit(): void {
     this.getNextCode();
+    this.validateForm = this.fb.group({
+      description: [this.quantity, [Validators.required]],
+    });
   }
 
   /**
@@ -57,40 +67,60 @@ export class CreateRetrivalsComponent implements OnInit {
    */
 
   save() {
-    let data = {
-      model: this.retriveModel,
-      billsCode: this.billsCode,
-      productName: this.productName,
-    };
-    this.dialogRef.close(data);
-  }
-
-  closeResult = '';
-
-  open(content:any) {
-    this.modalService.open(content, {ariaLabelledBy: 'modal-basic-title'}).result.then((result) => {
-      this.closeResult = `Closed with: ${result}`;
-    }, (reason) => {
-      this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
-    });
-  }
-
-  private getDismissReason(reason: any): string {
-    if (reason === ModalDismissReasons.ESC) {
-      return 'by pressing ESC';
-    } else if (reason === ModalDismissReasons.BACKDROP_CLICK) {
-      return 'by clicking on a backdrop';
+    if (this.retrivalBillsList.length!=0) {
+      this.retriveModel.discount = this.discount
+      this.retriveModel.totalCost = this.total
+      this.retriveModel.netCost = this.total - this.discount
+      
+      let data = {
+        model: this.retriveModel,
+        billsCode: this.billsCode,
+        dynamicList:this.retrivalBillsList,
+        codeSearch:this.codeSearch
+      };
+      this.dialogRef.close(data);
     } else {
-      return `with: ${reason}`;
+      console.log("error");
+      
     }
   }
 
+  deleteDynamicItem(obj: any) {
+    for (var i = 0; i < this.retrivalBillsList.length; i++) {
+      if (this.retrivalBillsList[i] === obj) {
+        this.retrivalBillsList.splice(i, 1);
+      }
+    }
+    // this.calcTotal()
+  }
+
+  open(content: any, item: SaleOrderDetails) {
+    this.maxQuantity = item.quantity;
+    this.productSelected = item;
+    this.modalService.open(content, { ariaLabelledBy: 'modal-basic-title' });
+  }
+
+  onAddRetrival() {
+    if (this.maxQuantity < this.quantity || this.quantity == 0) {
+      this.ismaxQuantity = true;
+    } else {
+      let dynamic: SaleOrderDetails = new SaleOrderDetails();
+      dynamic.price = this.productSelected.price;
+      dynamic.quantity = this.quantity;
+      dynamic.total = this.quantity * this.productSelected.price;
+      dynamic.product = this.productSelected.product;
+      this.retrivalBillsList.push(dynamic);
+      this.calcTotal();
+      this.modalService.dismissAll();
+    }
+  }
 
   onRetrive(obj: SaleOrderDetails) {
     console.log(obj);
   }
 
   getBills() {
+    this.clear()
     this.saleOrderDetails.getByCode(this.codeSearch).subscribe((data) => {
       this.saleOrderList = data;
     });
@@ -99,7 +129,30 @@ export class CreateRetrivalsComponent implements OnInit {
     });
   }
 
+  clear() {
+    this.retriveModel = new RetrivalsModel();
+    this.saleOrderList = [];
+    this.retrivalBillsList = [];
+    this.saleOrderPaymentList = [];
+    this.quantity = 0;
+    this.maxQuantity = 0;
+    this.ismaxQuantity = false;
+    this.productSelected = new SaleOrderDetails();
+  }
+
   close() {
     this.dialogRef.close();
+  }
+
+  calcTotal() {
+    this.discount = 0;
+    this.total = 0
+    if (this.retrivalBillsList.length == 0) {
+      this.total = 0
+    } else {
+      this.total = this.retrivalBillsList.map(a => a.total).reduce(function (a, b) {
+        return a + b;
+      })
+    }
   }
 }

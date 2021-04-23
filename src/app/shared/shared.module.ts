@@ -21,6 +21,7 @@ import { AboutAppDialogComponent } from './components/layout/dialog/about-app-di
     RouterModule,
     NgMaterialModule,
     NgxPaginationModule,
+    
    ],
   exports: [   
     CommonModule,

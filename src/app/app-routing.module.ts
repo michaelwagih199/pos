@@ -38,6 +38,19 @@ const routes: Routes = [
     path: 'retrivals',
     loadChildren: () => import('./retrivals/retrivals.module').then(m => m.RetrivalsModule),
   },
+  {
+    path: 'reports',
+    loadChildren: () => import('./reports/reports.module').then(m => m.ReportsModule),
+  },
+  {
+    path: 'printing',
+    loadChildren: () => import('./printing/printing.module').then(m => m.PrintingModule),
+  },
+  {
+    path: 'setting',
+    loadChildren: () => import('./setting/setting.module').then(m => m.SettingModule),
+  },
+
 
 ];
 

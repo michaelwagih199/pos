@@ -9,6 +9,7 @@ import { CreateCategoryComponent } from './stock/dialog/create-category/create-c
 import { CreateProductComponent } from './stock/dialog/create-product/create-product.component';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { NgxBarcodeModule } from 'ngx-barcode';
+import { ExcelService } from './excel.service';
 
 @NgModule({
   declarations: [AppComponent],
@@ -21,7 +22,7 @@ import { NgxBarcodeModule } from 'ngx-barcode';
     NgxBarcodeModule,
   ],
   
-  providers: [authInterceptorProviders],
+  providers: [authInterceptorProviders,ExcelService],
   bootstrap: [AppComponent],
   entryComponents: [CreateCategoryComponent, CreateProductComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],

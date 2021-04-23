@@ -20,8 +20,12 @@ export class RetrivalsService {
     return this.http.get(`${this.baseUrl}/nextCode`);
   }
 
-  create(object: any,customerName:any): Observable<any>  {
-    return this.http.post(`${this.baseUrl}?customerName=${customerName}`, object);
+  create(object: any,orderCode:any): Observable<any>  {
+    return this.http.post(`${this.baseUrl}?orderCode=${orderCode}`, object);
+  }
+
+  delete(id: number): Observable<any> {
+    return this.http.put(`${this.baseUrl}/archive?id=${id}`, null);
   }
 
 }

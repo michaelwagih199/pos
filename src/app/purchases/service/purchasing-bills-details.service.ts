@@ -12,8 +12,8 @@ export class PurchasingBillsDetailsService {
 
   constructor(private http: HttpClient) { }
   
-  create(object: any,billsCode:any,productName:any): Observable<any>  {
-    return this.http.post(`${this.baseUrl}?billsCode=${billsCode}&productName=${productName}`, object);
+  create(object: any,billsCode:any,productCode:any): Observable<any>  {
+    return this.http.post(`${this.baseUrl}?billsCode=${billsCode}&productCode=${productCode}`, object);
   }
 
   getAllByBillId(id:any): Observable<any>{

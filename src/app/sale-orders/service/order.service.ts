@@ -15,8 +15,6 @@ export class OrderService {
     return this.http.get(`${this.baseUrl}/nextCode`);
   }
 
-
-
   createOrder(
     customerName: any,
     orderTypeId: any,
@@ -28,4 +26,10 @@ export class OrderService {
       {}
     );
   }
+
+  delete(id: any): Observable<any> {
+    return this.http.put(`${this.baseUrl}/archive?id=${id}`, null);
+  }
+
+
 }

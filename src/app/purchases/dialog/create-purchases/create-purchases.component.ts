@@ -31,6 +31,8 @@ export class CreatePurchasesComponent implements OnInit {
 
   arabic: Arabic = new Arabic();
   supliersList!: Supplier[];
+  productList!: ProductModel[];
+  product: ProductModel = new ProductModel();
 
   selectedSupllier!: Supplier;
 
@@ -39,11 +41,7 @@ export class CreatePurchasesComponent implements OnInit {
   total: number = 0;
   paid: number = 0;
   purchasingDetails: PurchasesBillsDetails = new PurchasesBillsDetails();
-
-  options!: string[];
-  filteredOptions!: Observable<string[]>;
   myControl = new FormControl();
-  searchInout: any;
   billsCode: any;
 
   constructor(
@@ -59,16 +57,9 @@ export class CreatePurchasesComponent implements OnInit {
 
   ngOnInit(): void {
     this.validate();
-    this.getProductNames();
+    this.getProducts();
     this.getNextCode();
     this.getAllSuppliers();
-  }
-
-  private _filter(value: string): string[] {
-    const filterValue = value.toLowerCase();
-    return this.options.filter((option) =>
-      option.toLowerCase().includes(filterValue)
-    );
   }
 
   /**
@@ -103,33 +94,26 @@ export class CreatePurchasesComponent implements OnInit {
   orderDetails() {}
 
   addDynamic() {
-    this.purchasingDetails.product = this.searchInout;
+    this.total = 0
+    this.purchasingDetails.product = this.product;
     this.purchasingDetails.total =
       this.purchasingDetails.itemPrice * this.purchasingDetails.itemQuantity;
-
     this.dynamicOrderList.push(this.purchasingDetails);
 
+    this.dynamicOrderList.forEach((element) => {
+      this.total += element.total;
+    });
     this.purchasingDetails = new PurchasesBillsDetails();
-    this.searchInout = '';
   }
 
   /**
    * data
    */
 
-  getProductNames() {
-    this.productService.getNames().subscribe(
-      (response) => {
-        this.options = response;
-        this.filteredOptions = this.myControl.valueChanges.pipe(
-          startWith(''),
-          map((value) => this._filter(value))
-        );
-      },
-      (error) => {
-        console.log(error);
-      }
-    );
+  getProducts() {
+    this.productService.findAll().subscribe((data) => {
+      this.productList = data;
+    });
   }
 
   getNextCode() {
@@ -157,7 +141,6 @@ export class CreatePurchasesComponent implements OnInit {
     this.validateForm = this.fb.group({
       billsDate: [null, [Validators.required]],
       supplierName: [null, [Validators.required]],
-      total: [null, [Validators.required]],
       paid: [null, [Validators.required]],
       notes: [null],
     });

@@ -2,16 +2,10 @@
     <h2 mat-dialog-title>كود المنتج</h2>
 </div>
 <mat-dialog-content>
-
-    <!-- <div id="print-section">
-        <ngx-barcode [bc-value]="barcode" [bc-display-value]="true"></ngx-barcode>
-    </div> -->
-
-
-    <div>
-        <ngx-barcode [bc-value]="barcode" [bc-display-value]="true"></ngx-barcode>
+    <div class="myDivToPrint">
+        <p class="title">{{model.productName}}</p>
+        <ngx-barcode style="width: 30mm ;height: 15mm;" [bc-value]="model.productCode" [bc-display-value]="true"></ngx-barcode>
     </div>
-
 </mat-dialog-content>
 
 <mat-dialog-actions align="center">

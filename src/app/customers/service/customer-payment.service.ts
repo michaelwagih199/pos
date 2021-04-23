@@ -29,4 +29,9 @@ export class CustomerPaymentService {
   }
 
 
+  delete(id: number): Observable<any> {
+    return this.http.put(`${this.baseUrl}/archive?id=${id}`, null);
+  }
+
+
 }

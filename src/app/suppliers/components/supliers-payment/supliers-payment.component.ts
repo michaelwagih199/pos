@@ -1,13 +1,16 @@
+import { Supplier } from './../../models/supplier';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { SupliersService } from '../../service/supliers.service';
 import { Subscription } from 'rxjs';
-import { Supplier } from '../../models/supplier';
 import { FormGroup, Validators, FormBuilder } from '@angular/forms';
 import { Arabic } from 'src/app/text';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { SupplierPayment } from '../../models/supplier-payment';
 import { SupliersPaymentService } from '../../service/supliers-payment.service';
+import { PurchasesBillsService } from 'src/app/purchases/service/purchases-bills.service';
+import { MatDialog } from '@angular/material/dialog';
+import { ConfirmationDialog } from 'src/app/shared/components/layout/dialog/confirmation/confirmation.component';
 
 @Component({
   selector: 'app-supliers-payment',
@@ -24,21 +27,23 @@ export class SupliersPaymentComponent implements OnInit {
   supplier: Supplier = new Supplier()
   supplierId!: number
   isLoading: boolean = false
-  allPayment: any = 0.0
-  indebtedness: any = 0.0
+  allPayment: number = 0.0
+  indebtedness: number = 0.0
 
   supplierPaymentList!: SupplierPayment[]
+
   //for tables
   displayedColumns: string[] = ['id', 'paymentDate', 'paymentValue', 'notes', 'actions']
 
-  
   constructor(
     private route: ActivatedRoute,
     private router: Router,
     private fb: FormBuilder,
+    private dialog: MatDialog,
     private supliersService: SupliersService,
     private supplierPaymentService: SupliersPaymentService,
-    private _snackBar: MatSnackBar
+    private _snackBar: MatSnackBar,
+    private purchasesBillsService: PurchasesBillsService
   ) { }
 
   ngOnInit(): void {
@@ -63,6 +68,7 @@ export class SupliersPaymentComponent implements OnInit {
           this.supplierPaymentList = data.supplierPayment;
           this.count = data.totalItems;
           this.getAllPayment()
+          this.findRemaing(this.supplierId)
         },
         error => {
           this.isLoading = false
@@ -88,12 +94,15 @@ export class SupliersPaymentComponent implements OnInit {
     }, error => console.log(error))
   }
 
-
+  findRemaing(supplierId:number){
+    this.purchasesBillsService.getRemaingSupplier(supplierId).subscribe(data=>{
+      this.indebtedness = data
+    })
+  }
 
   /**
    * events
    */
-
   addPayment() {
     this.isLoading = true
     this.supplierPaymentService.createPayment(this.supplierPayment, this.supplierId)
@@ -109,11 +118,29 @@ export class SupliersPaymentComponent implements OnInit {
 
   }
 
-  deletePayment(obj: any) {
-
+  deleteDialog(obj: any) {
+    const dialogRef = this.dialog.open(ConfirmationDialog, {
+      data: {
+        message: `${this.arabic.stock.category.util.dialog.deleteDialog.title}: ${obj.supplierName}`,
+        buttonText: {
+          ok: `${this.arabic.stock.category.util.dialog.dialogButtons.ok}`,
+          cancel: `${this.arabic.stock.category.util.dialog.dialogButtons.cancel}`
+        }
+      }
+    });
+    dialogRef.afterClosed().subscribe((confirmed: boolean) => {
+      if (confirmed) {
+        this.supplierPaymentService.delete(obj.id).subscribe(data => {
+          this.openSnackBar(`${this.arabic.stock.category.util.dialog.notification.deleted}`, '')
+          this.retrivePayment()
+        }, error => console.log(error))
+        const a = document.createElement('a');
+        a.click();
+        a.remove();
+      }
+    });
   }
-
-
+  
   back() {
     this.router.navigate([`suppliers`])
   }

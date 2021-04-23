@@ -16,41 +16,51 @@ import { BarcodeComponent } from '../../dialog/barcode/barcode.component';
 @Component({
   selector: 'app-products',
   templateUrl: './products.component.html',
-  styleUrls: ['./products.component.scss']
+  styleUrls: ['./products.component.scss'],
 })
 export class ProductsComponent implements OnInit {
-
-  arabic: Arabic = new Arabic()
-  categoryList!: CategoryModel[]
-  productList!: ProductModel[]
-  product: ProductModel = new ProductModel()
-  searchInout: any
+  arabic: Arabic = new Arabic();
+  categoryList!: CategoryModel[];
+  productList!: ProductModel[];
+  product: ProductModel = new ProductModel();
+  searchInout: any;
   selectedSearchFilter!: string;
-  isLoading:boolean= false
-
+  isLoading: boolean = false;
 
   //for tables
-  displayedColumns: string[] = ['id', 'productName', 'retailPrice', 'purchasingPrice', 'numberUnitsInStock', 'alertUnits', 'productCategory', 'wholesalePrice', 'actions']
+  displayedColumns: string[] = [
+    'id',
+    'productName',
+    'retailPrice',
+    'purchasingPrice',
+    'numberUnitsInStock',
+    'alertUnits',
+    'productCategory',
+    'wholesalePrice',
+    'actions',
+  ];
   myControl = new FormControl();
   //for autocomplete
-  options!: string[]
-  filteredOptions!: Observable<string[]>
+  options!: string[];
+  filteredOptions!: Observable<string[]>;
 
   constructor(
     private categoryService: CategoryServiceService,
     private productService: ProductServiceService,
     private dialog: MatDialog,
     private _snackBar: MatSnackBar
-  ) { }
+  ) {}
 
   ngOnInit(): void {
-    this.getProductNames()
-    this.retrieveProductsPagable()
+    this.getProductNames();
+    this.retrieveProductsPagable();
   }
 
   private _filter(value: string): string[] {
     const filterValue = value.toLowerCase();
-    return this.options.filter(option => option.toLowerCase().includes(filterValue));
+    return this.options.filter((option) =>
+      option.toLowerCase().includes(filterValue)
+    );
   }
 
   /**
@@ -58,53 +68,61 @@ export class ProductsComponent implements OnInit {
    */
 
   getProductNames() {
-    this.productService.getNames().subscribe(response => {
-      this.options = response
-      this.filteredOptions = this.myControl.valueChanges
-        .pipe(
+    this.productService.getNames().subscribe(
+      (response) => {
+        this.options = response;
+        this.filteredOptions = this.myControl.valueChanges.pipe(
           startWith(''),
-          map(value => this._filter(value))
+          map((value) => this._filter(value))
         );
-    }, error => {
-      console.log(error)
-    })
+      },
+      (error) => {
+        console.log(error);
+      }
+    );
   }
 
   findProductByName() {
-    this.isLoading = true
-    this.productService.findByName(this.searchInout).subscribe(data => {
-      this.isLoading = false
-      this.productList = data
-    }, error => console.log(error))
+    this.isLoading = true;
+    this.productService.findByName(this.searchInout).subscribe(
+      (data) => {
+        this.isLoading = false;
+        this.productList = data;
+      },
+      (error) => console.log(error)
+    );
   }
 
   findProductByCode() {
-    this.isLoading = true
-    this.productService.findByCode(this.searchInout).subscribe(data => {
-      this.isLoading = false
-      this.productList = data
-    }, error => console.log(error))
+    this.isLoading = true;
+    this.productService.findByCode(this.searchInout).subscribe(
+      (data) => {
+        this.isLoading = false;
+        this.productList = data;
+      },
+      (error) => console.log(error)
+    );
   }
 
   refresh() {
     this.retrieveProductsPagable();
-    this.searchInout = ''
+    this.searchInout = '';
   }
 
   retrieveProductsPagable() {
-    this.isLoading = true
+    this.isLoading = true;
     const params = this.getRequestParams(this.page, this.pageSize);
-    this.productService.getAllPagination(params)
-      .subscribe(
-        data => {
-          this.isLoading = false
-          this.productList = data.products;
-          this.count = data.totalItems;
-        },
-        error => {
-          this.isLoading = false
-          console.log(error);
-        });
+    this.productService.getAllPagination(params).subscribe(
+      (data) => {
+        this.isLoading = false;
+        this.productList = data.products;
+        this.count = data.totalItems;
+      },
+      (error) => {
+        this.isLoading = false;
+        console.log(error);
+      }
+    );
   }
 
   /**
@@ -112,25 +130,21 @@ export class ProductsComponent implements OnInit {
    */
 
   search() {
-    if (this.selectedSearchFilter == 'name')
-      this.findProductByName()
-    else if (this.selectedSearchFilter == 'code')
-      this.findProductByCode()
+    if (this.selectedSearchFilter == 'name') this.findProductByName();
+    else if (this.selectedSearchFilter == 'code') this.findProductByCode();
   }
 
-
   displayFn(value: any): string {
-    console.log(value)
-    this.searchInout = value
+    this.searchInout = value;
     return value;
   }
 
-  onBarcode(element:any){
-    this.isLoading = true
+  onBarcode(element: any) {
+    // this.isLoading = true;
     const dialogRef = this.dialog.open(BarcodeComponent, {
       data: {
-        productCode:element.productCode
-      }
+        productCode: element,
+      },
     });
     dialogRef.afterClosed().subscribe((confirmed: boolean) => {
       if (confirmed) {
@@ -143,30 +157,34 @@ export class ProductsComponent implements OnInit {
 
   OnHumanSelected(SelectedHuman: any) {
     this.searchInout = SelectedHuman;
-    this.findProductByName()
+    this.findProductByName();
   }
 
-
-
   deleteDialog(action: any, obj: any) {
-    this.isLoading = true
+    this.isLoading = true;
     const dialogRef = this.dialog.open(ConfirmationDialog, {
       data: {
         message: `${this.arabic.stock.category.util.dialog.deleteDialog.title}: ${obj.productName}`,
         buttonText: {
           ok: `${this.arabic.stock.category.util.dialog.dialogButtons.ok}`,
-          cancel: `${this.arabic.stock.category.util.dialog.dialogButtons.cancel}`
-        }
-      }
+          cancel: `${this.arabic.stock.category.util.dialog.dialogButtons.cancel}`,
+        },
+      },
     });
     dialogRef.afterClosed().subscribe((confirmed: boolean) => {
       if (confirmed) {
-        this.isLoading = false
-        this.productService.delete(obj.id).subscribe(data => {
-          this.openSnackBar(`${this.arabic.stock.category.util.dialog.notification.deleted}`, '')
-          this.retrieveProductsPagable()
-          this.getProductNames()
-        }, error => console.log(error))
+        this.isLoading = false;
+        this.productService.delete(obj.id).subscribe(
+          (data) => {
+            this.openSnackBar(
+              `${this.arabic.stock.category.util.dialog.notification.deleted}`,
+              ''
+            );
+            this.retrieveProductsPagable();
+            this.getProductNames();
+          },
+          (error) => console.log(error)
+        );
         const a = document.createElement('a');
         a.click();
         a.remove();
@@ -180,58 +198,60 @@ export class ProductsComponent implements OnInit {
     dialogConfig.autoFocus = true;
     dialogConfig.data = {
       productModel: obj,
-      categoryId: 0
-    }
+      categoryId: 0,
+    };
     this.dialog.open(CreateProductComponent, dialogConfig);
     const dialogRef = this.dialog.open(CreateProductComponent, dialogConfig);
-    dialogRef.afterClosed().subscribe(
-      data => {
-        this.productService.update(data.productModel.id, data.productModel, data.categoryId).subscribe(data => {
-          this.openSnackBar(`${this.arabic.util.saved}`, '')
-          this.refresh();
-        }, error => console.log(data))
-      }
-    );
+    dialogRef.afterClosed().subscribe((data) => {
+      this.productService
+        .update(data.productModel.id, data.productModel, data.categoryId)
+        .subscribe(
+          (data) => {
+            this.openSnackBar(`${this.arabic.util.saved}`, '');
+            this.refresh();
+          },
+          (error) => console.log(data)
+        );
+    });
   }
 
   onSearchFilterChange(value: string) {
     if (value == 'name') {
-      this.getProductNames()
-      this.searchInout = ''
+      this.getProductNames();
+      this.searchInout = '';
     } else {
-      this.searchInout = ''
-      this.options = []
+      this.searchInout = '';
+      this.options = [];
     }
-    console.log(value)
+    console.log(value);
   }
 
-
   addCategoryDialog() {
+    this.product = new ProductModel();
     const dialogConfig = new MatDialogConfig();
     dialogConfig.disableClose = true;
     dialogConfig.autoFocus = true;
     dialogConfig.data = {
       productModel: this.product,
-      categoryId: 0
-    }
+      categoryId: 0,
+    };
     this.dialog.open(CreateProductComponent, dialogConfig);
     const dialogRef = this.dialog.open(CreateProductComponent, dialogConfig);
-    dialogRef.afterClosed().subscribe(
-      data => {
-        console.log(data)
-        this.productService.create(data.productModel, data.categoryId).subscribe(data => {
-          this.openSnackBar(`${this.arabic.util.saved}`, '')
+    dialogRef.afterClosed().subscribe((data) => {
+      console.log(data);
+      this.productService.create(data.productModel, data.categoryId).subscribe(
+        (data) => {
+          this.openSnackBar(`${this.arabic.util.saved}`, '');
           this.refresh();
-        }, error => console.log(data))
-
-      }
-    );
+        },
+        (error) => console.log(data)
+      );
+    });
   }
-
 
   /**
    * UIUX and Helbers
-   * 
+   *
    */
 
   openSnackBar(message: string, action: string) {
@@ -248,8 +268,6 @@ export class ProductsComponent implements OnInit {
     this.retrieveProductsPagable();
   }
 
-
-
   getRequestParams(page: any, pageSize: any) {
     // tslint:disable-next-line:prefer-const
     let params: any = {};
@@ -261,5 +279,4 @@ export class ProductsComponent implements OnInit {
     }
     return params;
   }
-
 }

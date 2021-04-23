@@ -15,8 +15,10 @@ export class DynamicItemService {
   findDynamic(productCode: any,
     paymentTypeId: any,
     orderTypeId: any,
+    quantity:number,
     installmentPercentage: any): Observable<any> {
-    return this.http.get(`${this.baseUrl}?productCode=${productCode}&paymentTypeId=${paymentTypeId}&orderTypeId=${orderTypeId}&installmentPercentage=${installmentPercentage}`);
+    //http://localhost:8080/api/dynamicDetails?productCode=1010800901&paymentTypeId=1&orderTypeId=2&quantity=11&installmentPercentage=30
+    return this.http.get(`${this.baseUrl}?productCode=${productCode}&paymentTypeId=${paymentTypeId}&orderTypeId=${orderTypeId}&quantity=${quantity}&installmentPercentage=${installmentPercentage}`);
   }
 
 }

@@ -39,11 +39,10 @@
                 </div>
 
                 <div class="col">
-                    <mat-form-field appearance="outline" class="full-width">
-                        <mat-label>قيمة الفاتورة</mat-label>
-                        <input matInput type="number" required placeholder="قيمة الفاتورة" formControlName="total"
-                            [(ngModel)]="total" autocomplete="off">
-                    </mat-form-field>
+                    <div class="row justify-content-center mt-2">
+                        <h3 class="text-dark">قيمة الفاتورة</h3>
+                        <h3 class="bg-dark text-white p-2 rounded mr-2">{{total}}</h3>
+                    </div>
                 </div>
 
                 <div class="col">
@@ -73,17 +72,15 @@
             <div class="row justify-content-between custom-div  mt-2">
 
                 <div class="col mt-2">
-                    <mat-form-field class="full-width" appearance="outline">
-                        <mat-label>{{arabic.stock.products.util.searchBar}}</mat-label>
-                        <input type="text" required placeholder={{arabic.stock.products.util.searchBar}} matInput
-                            formControlName="product" [matAutocomplete]="auto" [(ngModel)]="searchInout">
-                        <mat-icon color="accent" matSuffix>search</mat-icon>
-                        <mat-autocomplete #auto="matAutocomplete">
-                            <mat-option *ngFor="let option of filteredOptions | async" [value]="option">
-                                {{option}}
+                    <mat-form-field appearance="outline" class="full-width">
+                        <mat-label>المنتجات</mat-label>
+                        <mat-select required autocomplete="off" [(ngModel)]="product" formControlName="product">
+                            <mat-option *ngFor="let item of productList" [value]="item">
+                                {{item.productName}}
                             </mat-option>
-                        </mat-autocomplete>
+                        </mat-select>
                     </mat-form-field>
+
                 </div>
 
                 <div class="col mt-2">
@@ -102,7 +99,8 @@
                     </mat-form-field>
                 </div>
                 <div class="col-2 mt-3">
-                    <button mat-raised-button color="primary" [disabled]="!validateDynamicForm.valid" (click)="addDynamic()">إضافة</button>
+                    <button mat-raised-button color="primary" [disabled]="!validateDynamicForm.valid"
+                        (click)="addDynamic()">إضافة</button>
                 </div>
             </div>
         </form>
@@ -120,7 +118,7 @@
                 </thead>
                 <tbody>
                     <tr *ngFor="let item of dynamicOrderList">
-                        <th>{{ item.product }}</th>
+                        <th>{{ item.product.productName }}</th>
                         <td>{{ item.itemQuantity }}</td>
                         <td>{{ item.itemPrice }}</td>
                         <td>{{ item.total}}</td>

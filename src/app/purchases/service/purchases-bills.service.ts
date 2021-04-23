@@ -20,8 +20,17 @@ export class PurchasesBillsService {
     return this.http.get(`${this.baseUrl}/nextCode`);
   }
 
+  getRemaingSupplier(supplierId:number):Observable<any>{
+    return this.http.get(`${this.baseUrl}/supplier?supplierId=${supplierId}`);
+  }
+
   create(object: any,supplierId:any): Observable<any>  {
     return this.http.post(`${this.baseUrl}?supplierId=${supplierId}`, object);
   }
+
+  delete(id: number): Observable<any> {
+    return this.http.put(`${this.baseUrl}/archive?id=${id}`, null);
+  }
+
 
 }

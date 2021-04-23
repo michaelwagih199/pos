@@ -7,6 +7,8 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { CustomerPaymentService } from '../../service/customer-payment.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { CustomerModel } from '../../model/customer-model';
+import { MatDialog } from '@angular/material/dialog';
+import { ConfirmationDialog } from 'src/app/shared/components/layout/dialog/confirmation/confirmation.component';
 
 @Component({
   selector: 'app-payments',
@@ -33,6 +35,7 @@ export class PaymentsComponent implements OnInit {
   constructor(private fb: FormBuilder,
     private customerPaymentService: CustomerPaymentService,
     private route: ActivatedRoute,
+    private dialog: MatDialog,
     private router: Router, private _snackBar: MatSnackBar,) { }
 
   ngOnInit(): void {
@@ -95,12 +98,29 @@ export class PaymentsComponent implements OnInit {
       }, error => console.log(error))
   }
 
-  editePayment(obj: any) {
 
-  }
-
-  deletePayment(obj: any) {
-
+  deletePayment(obj: CustomerPaymentModel) {
+    const dialogRef = this.dialog.open(ConfirmationDialog, {
+      data: {
+        message: `${this.arabic.stock.category.util.dialog.deleteDialog.title}: ${obj.paymentValue}`,
+        buttonText: {
+          ok: `${this.arabic.stock.category.util.dialog.dialogButtons.ok}`,
+          cancel: `${this.arabic.stock.category.util.dialog.dialogButtons.cancel}`
+        }
+      }
+    });
+    dialogRef.afterClosed().subscribe((confirmed: boolean) => {
+      if (confirmed) {
+        this.customerPaymentService.delete(obj.id).subscribe(data => {
+          this.openSnackBar(`${this.arabic.stock.category.util.dialog.notification.deleted}`, '')
+          this.retrivePayment()
+         
+        }, error => console.log(error))
+        const a = document.createElement('a');
+        a.click();
+        a.remove();
+      }
+    });
   }
 
   /**

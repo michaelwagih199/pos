@@ -1,75 +1,71 @@
-
-.myContainer{
-    font-family: 'Cairo', sans-serif;
-    font-size: 16px;;
+.myContainer {
+  font-family: "Cairo", sans-serif;
+  font-size: 16px;
 }
-.example-full-width{
-    width: 100%;
+.example-full-width {
+  width: 100%;
 }
 .example-form {
-    min-width: 300px;
-    max-width: 500px;
-    width: 100%;
-}
-  
-.greybg{
-    background-color: #F4F3F0;
-}
-.navy{
-    background-color: #385E72;
-}
-.red{
-    background-color: #DB1F48
-}
-.sand{
-    background: #F4F3F0;
-    border-radius: 8px;
-    border: 1px solid #212121;
+  min-width: 300px;
+  max-width: 500px;
+  width: 100%;
 }
 
-.dark{
-background-color: #122620;
+.greybg {
+  background-color: #f4f3f0;
+}
+.navy {
+  background-color: #385e72;
+}
+.red {
+  background-color: #db1f48;
+}
+.sand {
+  background: #f4f3f0;
+  border-radius: 8px;
+  border: 1px solid #212121;
 }
 
-.dark-bg{
-    background-color: #1E1E1E;
+.dark {
+  background-color: #122620;
 }
 
-.text-s{
-    font-size: 12px;
-}
-.text14{
-    font-size: 14px;
+.dark-bg {
+  background-color: #1e1e1e;
 }
 
-
-.text-xl{
-    font-size: x-large;
-    font-family: Arial, Helvetica, sans-serif;
+.text-s {
+  font-size: 12px;
 }
-.text-l{
-    font-size: large;
-    font-family: Arial, Helvetica, sans-serif;
+.text14 {
+  font-size: 14px;
 }
 
-.info{
-   font-size: 20px;
-   background-color: #F4F3F0;
-   font-weight: bold;
+.text-xl {
+  font-size: x-large;
+  font-family: Arial, Helvetica, sans-serif;
+}
+.text-l {
+  font-size: large;
+  font-family: Arial, Helvetica, sans-serif;
 }
 
-mat-form-field{
-    width: 150px;
-    font-family: 'Cairo', sans-serif;
-    font-weight: bold;
+.info {
+  font-size: 20px;
+  background-color: #f4f3f0;
+  font-weight: bold;
 }
 
-
-
-
+mat-form-field {
+  width: 150px;
+  font-family: "Cairo", sans-serif;
+  font-weight: bold;
+}
 
 .mybtn {
-    width: 40%;
-    font-size: 16px;
-    font-family: 'Cairo';
+  width: 40%;
+  font-size: 16px;
+  font-family: "Cairo";
 }
+
+
